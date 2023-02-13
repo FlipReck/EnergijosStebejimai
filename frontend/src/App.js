@@ -5,7 +5,7 @@ function App(){
   const [backendData, setBackendData] = useState([{}])
 
   useEffect(() => {
-    fetch("/api").then(
+    fetch("/getAll").then(
       response => response.json()
     ).then(
       data => {
@@ -16,14 +16,8 @@ function App(){
 
   return (
     <div>
-
-      {(typeof backendData.users === 'undefined') ?(
-        <p> Loading ..</p>
-      ) : (
-        backendData.users.map((user, i) => (
-          <p key={i}>{user}</p>
-        ))
-      )}
+      
+      <pre>{JSON.stringify(backendData, null, 2)}</pre>
 
     </div>
   )
