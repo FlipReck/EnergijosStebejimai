@@ -9,7 +9,7 @@ const pool  = mysql.createPool({
     host            : 'localhost',
     user            : 'root',
     password        : '',
-    database        : 'test2'
+    database        : 'pvptest-2'
 })
 
 // app.get("/api", (req, res) => {
@@ -38,7 +38,7 @@ app.use(function(req, res, next) {
 app.get('/getAll', (req, res) => {
     pool.getConnection((err, connection) => {
         if(err) throw err
-        connection.query('SELECT * FROM reportdata', (err, rows) => {
+        connection.query('SELECT * FROM sensordata', (err, rows) => {
             connection.release() // return the connection to pool
             if (!err) {
                 res.send(rows)
@@ -50,6 +50,25 @@ app.get('/getAll', (req, res) => {
         })
     })
 });
+
+// SELECT sensor_id, hour(reading_time), AVG(power) FROM `sensordata` WHERE sensor_id = 1 GROUP BY hour(reading_time)
+
+app.get('/getHourGraph', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if(err) throw err
+        connection.query('SELECT hour(reading_time) as hour, AVG(power) as power FROM `sensordata` WHERE sensor_id = 1 GROUP BY hour(reading_time)', (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+            
+            console.log('data: \n', rows)
+        })
+    })
+});
+
 
 // app.get('/test', (req, res) => {
 //     observationsControler.getAllObservations,
