@@ -14,7 +14,7 @@ export default function Header() {
                 <Button href="./" startIcon={<HomeIcon />}>Homepage</Button>
                 <Button href="./data" startIcon={<TableChartIcon />}>Sensor Data</Button>
                 <Button href="./graph" startIcon={<EqualizerIcon />}>Graph</Button>
-                <Button href="./temp" startIcon={<EqualizerIcon />}>Temp</Button>
+                <Button href="./sensorForm" startIcon={<EqualizerIcon />}>Sensor Form</Button>
                 <Button href="./temp" startIcon={<EqualizerIcon />}>Temp</Button>
                 <Button href="./temp" startIcon={<EqualizerIcon />}>Temp</Button>
             </ButtonGroup>
