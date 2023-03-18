@@ -1,4 +1,4 @@
-import { Box, TextField, Button } from "@mui/material";
+//import { Box, TextField, Button } from "@mui/material";
 
 export default function SensorForm() {
 
@@ -11,6 +11,9 @@ export default function SensorForm() {
 
         <label for="power">Power:</label>
         <input type="number" id="power" name="power"></input><br></br>
+
+        <label for="useage">Useage:</label>
+        <input type="text" id="useage" name="useage"></input><br></br>
 
         <input type="submit" value="Submit"/>
       </form>

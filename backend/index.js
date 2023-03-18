@@ -9,7 +9,7 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'pvptest-2'
+    database: 'pvpdb'
 })
 
 // app.get("/api", (req, res) => {
@@ -39,7 +39,7 @@ app.use(function (req, res, next) {
 app.get('/getAll', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
-        connection.query('SELECT * FROM sensordata', (err, rows) => {
+        connection.query('SELECT * FROM irasai', (err, rows) => {
             connection.release() // return the connection to pool
             if (!err) {
                 res.send(rows)
@@ -57,7 +57,7 @@ app.get('/getAll', (req, res) => {
 app.get('/getHourGraph', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
-        connection.query('SELECT hour(reading_time) as hour, AVG(power) as power FROM `sensordata` WHERE sensor_id = 1 GROUP BY hour(reading_time)', (err, rows) => {
+        connection.query('SELECT hour(laikas) as hour, AVG(galia) as power FROM `irasai` WHERE id_sensorius = 1 GROUP BY hour(laikas)', (err, rows) => {
             connection.release() // return the connection to pool
             if (!err) {
                 res.send(rows)
@@ -84,8 +84,9 @@ app.post('/newSensorEntry', function(req, res, next) {
 
         const sensor_id = req.body.sensor_id
         const power = req.body.power
+        const useage = req.body.useage
 
-        connection.query('INSERT INTO sensordata SET sensor_id = ?, power = ?', [sensor_id, power], (err, rows) => {
+        connection.query('INSERT INTO irasai SET id_sensorius = ?, galia = ?, sanaudos = ?', [sensor_id, power, useage], (err, rows) => {
             connection.release() // return the connection to pool
             if (!err) {
                 res.send(`Entry has been added.`)
@@ -96,6 +97,8 @@ app.post('/newSensorEntry', function(req, res, next) {
         })
     })
 });
+
+//SELECT patalpa.kompiuteriu_kiekis, patalpa.energijos_riba_per_zmogu FROM `irasai` INNER JOIN (sensorius INNER JOIN patalpa on sensorius.id_patalpa = patalpa.id) on irasai.id_sensorius = sensorius.id
 
 
 // app.get('/test', (req, res) => {

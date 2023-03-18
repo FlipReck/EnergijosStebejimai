@@ -5,8 +5,6 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Button,
-    Box,
     Typography,
 } from "@mui/material";
 
@@ -30,6 +28,9 @@ export default function DataTable({data}) {
                 power
               </TableCell>
               <TableCell>
+                useage
+              </TableCell>
+              <TableCell>
                 reading time
               </TableCell>
              </TableRow>
@@ -41,16 +42,16 @@ export default function DataTable({data}) {
                  {row.id}
                 </TableCell>
                 <TableCell>
-                 {row.sensor_id}
+                 {row.id_sensorius}
                 </TableCell>
                 <TableCell>
-                 {row.power}
+                 {row.galia}
                 </TableCell>
                 <TableCell>
-                 {row.reading_time}
+                 {row.sanaudos}
                 </TableCell>
                 <TableCell>
-                  
+                {row.laikas}
                 </TableCell>
               </TableRow>
               ))}
