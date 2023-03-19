@@ -3,6 +3,8 @@ import Home from './pages/home'
 import Data from './pages/data'
 import GraphPage from './pages/graphPage'
 import SensorForm from './pages/NewSensorEntry'
+import DayForm from './pages/dayForm'
+import TimeForm from './pages/timeForm'
 import { Routes, Route } from "react-router-dom";
 import Accommondation from './pages/accommodation';
 import AccommondationList from './pages/accommondationList';
@@ -21,7 +23,9 @@ function App(){
             <Route index element={<AccommondationList />} />
             <Route path=":id" element={<Accommondation />} />
             <Route path="new" element={<AccommondationForm />} />
-          </Route>
+       </Route>
+      <Route exact path="/dayForm" element={<DayForm />} />
+      <Route exact path="/timeForm" element={<TimeForm />} />
       <Route path="*" element={<p>Page Not Found</p>}></Route>
     </Routes>
   </>
