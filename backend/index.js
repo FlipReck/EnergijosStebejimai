@@ -70,13 +70,104 @@ app.get('/getHourGraph', (req, res) => {
     })
 });
 
-app.post('/newSensorEntry', function(req, res, next) {
+app.get('/getAllDays', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        connection.query('SELECT * FROM diena', (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
 
-    console.log('The query is: \n', req.query)
-    console.log('The body is: \n', req.body)
-    console.log('The id is: \n', req.body.sensor_id)
-    console.log('The power is: \n', req.power)
-    console.log('The params is: \n', req.params)
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+app.get('/getDay/:id', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        connection.query('SELECT * FROM diena WHERE id = ?',[req.params.id], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+app.post('/newDay', function(req, res) {
+
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+
+
+        const savaites_diena = req.body.savaites_diena
+
+        console.log(savaites_diena)
+
+        connection.query('INSERT INTO diena SET savaites_diena = ?', savaites_diena, (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                console.log(`Day has been added.`)
+                res.redirect('back')
+            } else {
+                console.log(err)
+            }
+
+        })
+
+    })
+});
+
+app.post('/updateDay', function(req, res) {
+
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+
+
+        const savaites_diena = req.body.savaites_diena
+        const id = req.body.id
+
+        console.log(savaites_diena)
+
+        connection.query('UPDATE diena SET savaites_diena = ? WHERE id = ?', [savaites_diena, id], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                console.log(`Day has been added.`)
+                res.redirect('back')
+            } else {
+                console.log(err)
+            }
+
+        })
+
+    })
+});
+
+app.get('/deleteDay/:id', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        connection.query('DELETE FROM diena WHERE id = ?',[req.params.id], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send("deleted")
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+app.post('/newSensorEntry', function(req, res) {
 
     pool.getConnection((err, connection) => {
         if (err) throw err
@@ -89,7 +180,8 @@ app.post('/newSensorEntry', function(req, res, next) {
         connection.query('INSERT INTO irasai SET id_sensorius = ?, galia = ?, sanaudos = ?', [sensor_id, power, useage], (err, rows) => {
             connection.release() // return the connection to pool
             if (!err) {
-                res.send(`Entry has been added.`)
+                console.log(`Entry has been added.`)
+                res.redirect('back')
             } else {
                 console.log(err)
             }
@@ -98,7 +190,34 @@ app.post('/newSensorEntry', function(req, res, next) {
     })
 });
 
-//SELECT patalpa.kompiuteriu_kiekis, patalpa.energijos_riba_per_zmogu FROM `irasai` INNER JOIN (sensorius INNER JOIN patalpa on sensorius.id_patalpa = patalpa.id) on irasai.id_sensorius = sensorius.id
+
+app.post('/newTime', function(req, res) {
+
+    console.log(req.body)
+
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+
+
+        const pradzia = req.body.pradzia
+        const pabaiga = req.body.pabaiga
+        const asmenu_kiekis = req.body.asmenu_kiekis
+
+
+        connection.query('INSERT INTO uzimtumo_laikas SET pradzia = ?, pabaiga = ?, asmenu_kiekis = ? ', [pradzia, pabaiga, asmenu_kiekis], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                console.log(`Time has been added.`)
+                res.redirect('back')
+            } else {
+                console.log(err)
+            }
+
+        })
+
+    })
+});
+
 
 
 // app.get('/test', (req, res) => {

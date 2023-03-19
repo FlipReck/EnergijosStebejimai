@@ -15,8 +15,8 @@ export default function Header() {
                 <Button href="./data" startIcon={<TableChartIcon />}>Sensor Data</Button>
                 <Button href="./graph" startIcon={<EqualizerIcon />}>Graph</Button>
                 <Button href="./sensorForm" startIcon={<EqualizerIcon />}>Sensor Form</Button>
-                <Button href="./temp" startIcon={<EqualizerIcon />}>Temp</Button>
-                <Button href="./temp" startIcon={<EqualizerIcon />}>Temp</Button>
+                <Button href="./dayForm" startIcon={<EqualizerIcon />}>Day Form</Button>
+                <Button href="./timeForm" startIcon={<EqualizerIcon />}>Time Form</Button>
             </ButtonGroup>
         </>
     );

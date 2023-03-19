@@ -1,9 +1,11 @@
 //import { Box, TextField, Button } from "@mui/material";
+import Header from "../components/header";
 
 export default function SensorForm() {
 
   return (
     <div>
+      <Header/>
       <form action="/newSensorEntry" method="POST" enctype="application/x-www-form-urlencoded">
 
         <label for="sensor_id">Sensor ID:</label>
