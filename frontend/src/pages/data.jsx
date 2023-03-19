@@ -22,10 +22,10 @@ export default function Data() {
 
     return (
         <div>
+            <Header/>
             <Typography sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl:2 }}>
                 Data table
             </Typography>
-            <Header/>
             <DataTable data={data}/>
         </div>
     );
