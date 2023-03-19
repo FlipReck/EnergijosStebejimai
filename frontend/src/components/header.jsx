@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 const forms = [
     {
       name: "Patalpa",
-      link: "",
+      link: "accommodation/new",
     },
     {
       name: "Savaite",
@@ -78,8 +78,9 @@ export default function Header() {
                     ))}
                 </Menu>
             </React.Fragment>
-            <Button href="./data" startIcon={<TableChartIcon />} style={{color:'white', pl:5}}>Sensor Data</Button>
+            <Button href="/data" startIcon={<TableChartIcon />} style={{color:'white', pl:5}}>Sensor Data</Button>
             <Button href="./graph" startIcon={<EqualizerIcon />} style={{color:'white', pl:5}}>Graph</Button>
+            <Button href="/accommodation" style={{color:'white', pl:5}}>Patalpos</Button>
             </Box>
         </AppBar>
     );
