@@ -1,14 +1,32 @@
-import { Typography } from "@mui/material";
+import DataTable from "../components/dataTable";
 import Header from "../components/header";
+import { useEffect, useState } from "react";
+import { Typography } from "@mui/material";
+import reportApi from "../Apis/reportApi";
 
 export default function Home() {
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        const getData = async () => {
+          try {
+            const repApi = new reportApi();
+            const response = await repApi.getAll();
+            setData(response.data);
+          } catch (err) {
+            setData(null);
+          }
+        };
+        getData();
+      }, []);
+
     return (
         <div>
-            <Typography sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl: 2 }}>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Wind_turbines_in_southern_California_2016.jpg/495px-Wind_turbines_in_southern_California_2016.jpg" alt="Wind" width={100} height={100} ></img>
-                Home page
+            <Header/>
+            <Typography sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl:2 }}>
+                Data table
             </Typography>
-            <Header />
+            <DataTable data={data}/>
         </div>
     );
-}
+  }
