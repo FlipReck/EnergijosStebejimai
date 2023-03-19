@@ -22,10 +22,10 @@ export default function GraphPage() {
 
     return (
         <div>
+            <Header/>
             <Typography sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl:2 }}>
                 Data graph
             </Typography>
-            <Header/>
             <Typography sx={{ textAlign: "center" , my: 4}}>Average peak power usage for each hour on 2023-02-15</Typography>
             <Box sx={{ width: 1000, margin: "0 auto", mb: 4 }}><canvas id="power"></canvas></Box>
             <Graph data={data}/>
