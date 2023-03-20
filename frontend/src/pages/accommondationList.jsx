@@ -1,6 +1,7 @@
 import { Typography } from "@mui/material";
 import * as React from "react";
 import Header from "../components/header";
+import AccommondationGrid from "../components/accommondationGrid";
 
 export default function AccommondationList() {
   return (
@@ -13,7 +14,7 @@ export default function AccommondationList() {
         Patalpos
       </Typography>
       <div className="middle-section">
-          <accommondationGrid />
+          <AccommondationGrid />
       </div>
     </>
   );

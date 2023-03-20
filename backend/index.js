@@ -54,6 +54,56 @@ app.get('/getAll', (req, res) => {
 
 // SELECT sensor_id, hour(reading_time), AVG(power) FROM `sensordata` WHERE sensor_id = 1 GROUP BY hour(reading_time)
 
+app.get('/getAllAccommendation', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        connection.query('SELECT * FROM patalpa', (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+app.get('/getAccommendation/:id', (req, res) => {
+    console.log(req.params.id)
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        connection.query('SELECT * FROM patalpa WHERE id = ?',[req.params.id], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+app.get('/getAllDevices/:id', (req, res) => {
+    console.log(req.params.id)
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        connection.query('SELECT * FROM prietaisai WHERE id_patalpa = ?',[req.params.id], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
 app.get('/getHourGraph', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
