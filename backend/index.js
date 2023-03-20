@@ -218,6 +218,102 @@ app.post('/newTime', function(req, res) {
     })
 });
 
+//GET all weeks
+app.get('/weeks', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT * FROM savaite', (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.send(rows);
+        });
+    })
+});
+
+//GET one week
+app.get('/weeks/:weekId', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT * FROM savaite WHERE id = ?', [req.params.weekId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (Object.keys(rows).length === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.send(rows);
+        });
+    })
+});
+
+//POST week
+app.post('/weeks', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        const weekNumber = req.body.weekNumber;
+        const isActive = req.body.isActive;
+        const room = req.body.room;
+
+        connection.query('INSERT INTO savaite SET id = ?, active = ?, id_patalpa = ?', [weekNumber, isActive, room], (error, results) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.status(201).json({weekNumber: weekNumber, isActive: isActive, room: room})
+        });
+    })
+});
+
+//PUT week
+app.put('/weeks/:weekId', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        // const weekNumber = req.body.weekNumber;
+        const weekNumber = req.params.weekId;
+        const isActive = req.body.isActive;
+        const room = req.body.room;
+
+        connection.query('UPDATE savaite SET active = ?, id_patalpa = ? WHERE id = ?', [isActive, room, weekNumber], (error, results) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            // need to check if id is valid
+            res.status(200).json({weekNumber: weekNumber, isActive: isActive, room: room})
+        })
+    })
+});
+
+//DELETE week
+app.delete('/weeks/:weekId', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('DELETE FROM savaite WHERE id = ?', [req.params.weekId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (Object.keys(rows).length === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.status(204).end();
+        });
+    })
+});
+
 
 
 // app.get('/test', (req, res) => {
