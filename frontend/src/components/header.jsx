@@ -2,14 +2,12 @@ import {
     Menu,
     MenuItem,
     Button,
-    ButtonGroup,
-    Container,
     AppBar,
     Typography,
     Box
 } from "@mui/material";
 import React, { useState } from "react"
-import HomeIcon from '@mui/icons-material/Home';
+// import HomeIcon from '@mui/icons-material/Home';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
 import { useNavigate } from "react-router-dom";
@@ -25,11 +23,11 @@ const forms = [
     },
     {
       name: "Diena",
-      link: "",
+      link: "dayForm",
     },
     {
       name: "Uzimtumo laikas",
-      link: "",
+      link: "timeForm",
     },
     {
       name: "Sensorius",
@@ -79,7 +77,7 @@ export default function Header() {
                 </Menu>
             </React.Fragment>
             <Button href="/data" startIcon={<TableChartIcon />} style={{color:'white', pl:5}}>Sensor Data</Button>
-            <Button href="./graph" startIcon={<EqualizerIcon />} style={{color:'white', pl:5}}>Graph</Button>
+            <Button href="/graph" startIcon={<EqualizerIcon />} style={{color:'white', pl:5}}>Graph</Button>
             <Button href="/accommodation" style={{color:'white', pl:5}}>Patalpos</Button>
             </Box>
         </AppBar>
