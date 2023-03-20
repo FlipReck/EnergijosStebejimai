@@ -273,7 +273,7 @@ app.post('/weeks', (req, res) => {
     })
 });
 
-//PUT week
+//UPDATE week
 app.put('/weeks/:weekId', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err){
@@ -289,7 +289,9 @@ app.put('/weeks/:weekId', (req, res) => {
             if (error){
                 return res.status(500).send('Internal Server Error');
             }
-            // need to check if id is valid
+            if (results.changedRows === 0){
+              return res.status(404).send('NotFound')
+          }
             res.status(200).json({weekNumber: weekNumber, isActive: isActive, room: room})
         })
     })
@@ -306,7 +308,7 @@ app.delete('/weeks/:weekId', (req, res) => {
             if (error){
                 return res.status(500).send('Internal Server Error');
             }
-            if (Object.keys(rows).length === 0){
+            if (rows.affectedRows === 0){
                 return res.status(404).send('NotFound')
             }
             res.status(204).end();
