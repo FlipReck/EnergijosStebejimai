@@ -21,7 +21,7 @@ const forms = [
     },
     {
       name: "Savaite",
-      link: "",
+      link: "week/new",
     },
     {
       name: "Diena",
@@ -55,7 +55,7 @@ export default function Header() {
     return (
         <AppBar position="static">
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, gap: 3 }}>
-            <Button style={{color:'white', px:5}}href="./">
+            <Button style={{color:'white', px:5}}href="/">
                 <Typography sx={{pr:3}} >Energijos stebejimas</Typography>
             </Button>
             <React.Fragment>

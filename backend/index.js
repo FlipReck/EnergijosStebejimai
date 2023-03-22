@@ -218,6 +218,22 @@ app.post('/newTime', function(req, res) {
     })
 });
 
+app.get('/getAllAccommendation', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        connection.query('SELECT * FROM patalpa', (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
 //GET all weeks
 app.get('/weeks', (req, res) => {
     pool.getConnection((err, connection) => {

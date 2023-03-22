@@ -9,6 +9,7 @@ import { Routes, Route } from "react-router-dom";
 import Accommondation from './pages/accommodation';
 import AccommondationList from './pages/accommondationList';
 import AccommondationForm from './pages/accommondationForm';
+import WeekForm from './pages/weekForm';
 
 function App(){
 
@@ -24,6 +25,7 @@ function App(){
             <Route path=":id" element={<Accommondation />} />
             <Route path="new" element={<AccommondationForm />} />
        </Route>
+       <Route exact path="/week/new" element={<WeekForm/>} />
       <Route exact path="/dayForm" element={<DayForm />} />
       <Route exact path="/timeForm" element={<TimeForm />} />
       <Route path="*" element={<p>Page Not Found</p>}></Route>
