@@ -1,6 +1,7 @@
 // import { useEffect, useState } from "react";
 // import dayApi from "../Apis/dayApi";
-import { Box, TextField, Button } from "@mui/material";
+import { Box, TextField, Button, Typography } from "@mui/material";
+import { Container } from "@mui/system";
 import Header from "../components/header";
 
 export default function TimeForm() {
@@ -24,23 +25,31 @@ export default function TimeForm() {
   return (
     <div>
       <Header />
-      <Box
-        component="form"
-        sx={{
-          '& > :not(style)': { m: 1, width: '25ch' },
-        }}
-        noValidate
-        autoComplete="off"
-        action="/newTime"
-        method="post"
-      >
-        <TextField InputLabelProps={{ shrink: true }} id="pradzia" name="pradzia" label="Pradzia:" variant="outlined" type="time" /><br />
 
-        <TextField InputLabelProps={{ shrink: true }} id="pabaiga" name="pabaiga" label="Pabaiga:" variant="outlined" type="time" /><br />
+      <Typography sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl: 2 }}>
+        Laiko forma
+      </Typography>
+      <Container component="main" maxWidth="xs">
+        <Box
+          component="form"
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+          noValidate
+          autoComplete="off"
+          action="/newTime"
+          method="post"
+        >
+          <TextField required fullWidth InputLabelProps={{ shrink: true }} id="pradzia" name="pradzia" label="Pradzia:" variant="outlined" type="time" /><br />
 
-        <TextField id="asmenu_kiekis" name="asmenu_kiekis" label="Asmenu kiekis:" variant="outlined" type="number" /><br />
+          <TextField required fullWidth InputLabelProps={{ shrink: true }} id="pabaiga" name="pabaiga" label="Pabaiga:" variant="outlined" type="time" /><br />
 
-        {/* <InputLabel id="demo-simple-select-label">Day</InputLabel>
+          <TextField required fullWidth id="asmenu_kiekis" name="asmenu_kiekis" label="Asmenu kiekis:" variant="outlined" type="number" /><br />
+
+          {/* <InputLabel id="demo-simple-select-label">Day</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
@@ -54,8 +63,9 @@ export default function TimeForm() {
           ))}
         </Select><br/>  */}
 
-        <Button type="submit">Submit</Button>
-      </Box>
+          <Button type="submit">Submit</Button>
+        </Box>
+        </Container>
     </div>
   );
 }

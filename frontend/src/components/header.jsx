@@ -30,7 +30,7 @@ const forms = [
       link: "timeForm",
     },
     {
-      name: "Sensorius",
+      name: "Irasas (testams)",
       link: "sensorForm",
     },
   ];

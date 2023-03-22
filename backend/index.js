@@ -36,6 +36,11 @@ app.use(function (req, res, next) {
     next();
 });
 
+//
+//Irasai backend
+//
+
+// Get all irasai
 app.get('/getAll', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
@@ -52,8 +57,52 @@ app.get('/getAll', (req, res) => {
     })
 });
 
-// SELECT sensor_id, hour(reading_time), AVG(power) FROM `sensordata` WHERE sensor_id = 1 GROUP BY hour(reading_time)
+//Insert one entry to irasas
+app.post('/newSensorEntry', function(req, res) {
 
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+
+
+        const sensor_id = req.body.sensor_id
+        const power = req.body.power
+        const useage = req.body.useage
+
+        connection.query('INSERT INTO irasai SET id_sensorius = ?, galia = ?, sanaudos = ?', [sensor_id, power, useage], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                console.log(`Entry has been added.`)
+                res.redirect('back')
+            } else {
+                console.log(err)
+            }
+
+        })
+    })
+});
+
+//Get irasai of a single day, that are grouped by hours
+app.get('/getHourGraph', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        connection.query('SELECT hour(laikas) as hour, AVG(galia) as power FROM `irasai` WHERE id_sensorius = 1 GROUP BY hour(laikas)', (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+//
+//Patalpos backend
+//
+
+//Get all patalpos
 app.get('/getAllAccommendation', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
@@ -70,6 +119,7 @@ app.get('/getAllAccommendation', (req, res) => {
     })
 });
 
+//Get one entry from patalpa by id
 app.get('/getAccommendation/:id', (req, res) => {
     console.log(req.params.id)
     pool.getConnection((err, connection) => {
@@ -87,6 +137,36 @@ app.get('/getAccommendation/:id', (req, res) => {
     })
 });
 
+//Update one entry from patalpa by id
+app.post('/updateAccommendation', (req, res) => {
+    console.log(req.params.id)
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+
+        const id = req.body.accommondationId;
+        const pavadinimas = req.body.pavadinimas;
+        const atsakingo_asmens_vardas = req.body.atsakingo_asmens_vardas;
+        const atsakingo_asmens_pavarde = req.body.atsakingo_asmens_pavarde;
+        const atsakingo_asmens_kontaktas = req.body.atsakingo_asmens_kontaktas;
+        const kompiuteriu_kiekis = req.body.kompiuteriu_kiekis;
+        const energijos_riba_per_zmogu = req.body.energijos_riba_per_zmogu;
+
+        connection.query('UPDATE `patalpa` SET`pavadinimas`= ? ,`atsakingo_asmens_vardas`= ? ,`atsakingo_asmens_pavarde`= ? ,`atsakingo_asmens_kontaktas`= ? ,`kompiuteriu_kiekis`= ? ,`energijos_riba_per_zmogu`= ? WHERE id = ?',
+        [pavadinimas, atsakingo_asmens_vardas, atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu, id], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (err){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.status(201).json({pavadinimas: pavadinimas})
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+//Get all prietaisai that belong to patalpa with id
 app.get('/getAllDevices/:id', (req, res) => {
     console.log(req.params.id)
     pool.getConnection((err, connection) => {
@@ -104,22 +184,11 @@ app.get('/getAllDevices/:id', (req, res) => {
     })
 });
 
-app.get('/getHourGraph', (req, res) => {
-    pool.getConnection((err, connection) => {
-        if (err) throw err
-        connection.query('SELECT hour(laikas) as hour, AVG(galia) as power FROM `irasai` WHERE id_sensorius = 1 GROUP BY hour(laikas)', (err, rows) => {
-            connection.release() // return the connection to pool
-            if (!err) {
-                res.send(rows)
-            } else {
-                console.log(err)
-            }
+//
+//Diena backend
+//
 
-            console.log('data: \n', rows)
-        })
-    })
-});
-
+//Get all diena
 app.get('/getAllDays', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
@@ -136,6 +205,7 @@ app.get('/getAllDays', (req, res) => {
     })
 });
 
+//Get one entry from diena by id
 app.get('/getDay/:id', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
@@ -152,6 +222,7 @@ app.get('/getDay/:id', (req, res) => {
     })
 });
 
+//Insert one entry to diena
 app.post('/newDay', function(req, res) {
 
     pool.getConnection((err, connection) => {
@@ -176,14 +247,15 @@ app.post('/newDay', function(req, res) {
     })
 });
 
-app.post('/updateDay', function(req, res) {
+//Update one entry from diena by id
+app.post('/updateDay/:id', function(req, res) {
 
     pool.getConnection((err, connection) => {
         if (err) throw err
 
 
         const savaites_diena = req.body.savaites_diena
-        const id = req.body.id
+        const id = req.params.id
 
         console.log(savaites_diena)
 
@@ -201,6 +273,7 @@ app.post('/updateDay', function(req, res) {
     })
 });
 
+//Delete one entry from diena by id
 app.get('/deleteDay/:id', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
@@ -217,30 +290,46 @@ app.get('/deleteDay/:id', (req, res) => {
     })
 });
 
-app.post('/newSensorEntry', function(req, res) {
+//
+//Uzimtumo_laikas backend
+//
 
+//GET all entries from uzimtumo_laikas
+app.get('/getAllTime', (req, res) => {
     pool.getConnection((err, connection) => {
-        if (err) throw err
-
-
-        const sensor_id = req.body.sensor_id
-        const power = req.body.power
-        const useage = req.body.useage
-
-        connection.query('INSERT INTO irasai SET id_sensorius = ?, galia = ?, sanaudos = ?', [sensor_id, power, useage], (err, rows) => {
-            connection.release() // return the connection to pool
-            if (!err) {
-                console.log(`Entry has been added.`)
-                res.redirect('back')
-            } else {
-                console.log(err)
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT * FROM savaite', (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
             }
-
-        })
+            res.send(rows);
+        });
     })
 });
 
+//GET one uzimtumo_laikas
+app.get('/getTime/:id', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT * FROM uzimtumo_laikas WHERE id = ?', [req.params.id], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (Object.keys(rows).length === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.send(rows);
+        });
+    })
+});
 
+//Insert one entry to uzimtumo_laikas
 app.post('/newTime', function(req, res) {
 
     console.log(req.body)
@@ -268,7 +357,54 @@ app.post('/newTime', function(req, res) {
     })
 });
 
-//GET all weeks
+//UPDATE uzimtumo_laikas entry by id
+app.put('/updateTime/:id', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        const id = req.params.id;
+        const pradzia = req.body.pradzia
+        const pabaiga = req.body.pabaiga
+        const asmenu_kiekis = req.body.asmenu_kiekis
+
+        connection.query('UPDATE uzimtumo_laikas SET pradzia = ?, pabaiga = ?, asmenu_kiekis = ? WHERE id = ?', [pradzia, pabaiga, asmenu_kiekis, id], (error, results) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (results.changedRows === 0){
+              return res.status(404).send('NotFound')
+          }
+            res.status(200).json({pradzia: pradzia, pabaiga: pabaiga, asmenu_kiekis: asmenu_kiekis})
+        })
+    })
+});
+
+//DELETE uzimtumo_laikas entry by id
+app.delete('/deleteTime/:id', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('DELETE FROM savaite WHERE id = ?', [req.params.id], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (rows.affectedRows === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.status(204).end();
+        });
+    })
+});
+
+//
+//Savaite backend
+//
+
+//GET all entries from savaite
 app.get('/weeks', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err){
@@ -284,7 +420,7 @@ app.get('/weeks', (req, res) => {
     })
 });
 
-//GET one week
+//GET one entry from savaite
 app.get('/weeks/:weekId', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err){
@@ -303,7 +439,7 @@ app.get('/weeks/:weekId', (req, res) => {
     })
 });
 
-//POST week
+//POST savaite entry
 app.post('/weeks', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err){
@@ -323,7 +459,7 @@ app.post('/weeks', (req, res) => {
     })
 });
 
-//UPDATE week
+//UPDATE savaite entry
 app.put('/weeks/:weekId', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err){
@@ -347,7 +483,7 @@ app.put('/weeks/:weekId', (req, res) => {
     })
 });
 
-//DELETE week
+//DELETE savaite entry
 app.delete('/weeks/:weekId', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err){

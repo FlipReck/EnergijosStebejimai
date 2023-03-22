@@ -1,8 +1,8 @@
-import DataTable from "../components/dataTable";
 import Header from "../components/header";
 import { useEffect, useState } from "react";
 import { Button, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import accommodationApi from "../Apis/accommodationApi";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -19,6 +19,9 @@ export default function Accommondation() {
     const { id } = useParams();
     const [data, setData] = useState(null);
     const [data1, setData1] = useState(null);
+    const navigate = useNavigate();
+
+
     useEffect(() => {
       const getData = async () => {
         try {
@@ -52,6 +55,9 @@ export default function Accommondation() {
                 <ListItem>Atsakingo asmens kontaktas</ListItem>
                 <ListItem>Kompiuterių kiekis</ListItem>
                 <ListItem>Energijos riba per žmogų</ListItem>
+                <ListItem><Button style={{background:"#1DA1F2", color:"white"}} onClick={() => navigate(`/accommodation/update/${id}`)}>
+                    Redaguoti
+                </Button></ListItem>
             </List>
             <List>
                 <ListItem>{data[0].pavadinimas}</ListItem>
@@ -60,6 +66,7 @@ export default function Accommondation() {
                 <ListItem>{data[0].kompiuteriu_kiekis}</ListItem>
                 <ListItem>{data[0].energijos_riba_per_zmogu}</ListItem>
             </List>
+            
             </Box>)}
             <Box sx={{ flexGrow: 1, p: 3 }}>
             { data1 === null || data1.length === 0 ? (

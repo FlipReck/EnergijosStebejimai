@@ -36,11 +36,17 @@ export default function AccommondationGrid() {
           gap: 3,
         }}
       >
-        {data.map((el, index) => (
+        {/* {data.map((el, index) => (
           <AccommondationGridItem
             data={el}
             key={index}
             onClick={() => navigate(`/accommodation/${index + 1}`)}
+          />
+        ))} */}
+        {data.map((el) => (
+          <AccommondationGridItem
+            data={el}
+            onClick={() => navigate(`/accommodation/${el.id}`)}
           />
         ))}
       </Grid>)}
