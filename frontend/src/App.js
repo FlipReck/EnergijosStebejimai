@@ -10,6 +10,7 @@ import Accommondation from './pages/accommodation';
 import AccommondationList from './pages/accommondationList';
 import AccommondationForm from './pages/accommondationForm';
 import AccommondationUpdateForm from './pages/accommondationUpdateForm';
+import AccommondationSchedule from './pages/accommondationSchedule';
 import WeekForm from './pages/weekForm';
 
 function App() {
@@ -27,6 +28,9 @@ function App() {
           <Route path="new" element={<AccommondationForm />} />
           <Route path="update">
             <Route path=":id" element={<AccommondationUpdateForm />} />
+          </Route>
+          <Route path="schedule">
+            <Route path=":id" element={<AccommondationSchedule />} />
           </Route>
         </Route>
         <Route exact path="/week/new" element={<WeekForm />} />

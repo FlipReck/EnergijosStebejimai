@@ -58,6 +58,9 @@ export default function Accommondation() {
                 <ListItem><Button style={{background:"#1DA1F2", color:"white"}} onClick={() => navigate(`/accommodation/update/${id}`)}>
                     Redaguoti
                 </Button></ListItem>
+                <ListItem><Button style={{background:"#1DA1F2", color:"white"}} onClick={() => navigate(`/accommodation/schedule/${id}`)}>
+                    Patalpos tvarkaraštis
+                </Button></ListItem>
             </List>
             <List>
                 <ListItem>{data[0].pavadinimas}</ListItem>
