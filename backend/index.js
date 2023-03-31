@@ -137,6 +137,10 @@ app.get('/getAccommendation/:id', (req, res) => {
     })
 });
 
+
+
+
+
 //Update one entry from patalpa by id
 app.post('/updateAccommendation', (req, res) => {
     console.log(req.params.id)
@@ -172,6 +176,25 @@ app.get('/getAllDevices/:id', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
         connection.query('SELECT * FROM prietaisai WHERE id_patalpa = ?',[req.params.id], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+
+//Get schedule that belong to patalpa with id
+app.get('/getSchedule/:id', (req, res) => {
+    console.log(req.params.id)
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        connection.query('SELECT diena.savaites_diena, uzimtumo_laikas.pradzia, uzimtumo_laikas.pabaiga, uzimtumo_laikas.asmenu_kiekis FROM savaite INNER JOIN savaites_diena ON savaite.id = savaites_diena.id_savaite INNER JOIN diena ON savaites_diena.id_diena = diena.id INNER JOIN dienos_laikas ON diena.id = dienos_laikas.id_diena INNER JOIN uzimtumo_laikas ON dienos_laikas.id_uzimtumo_laikas = uzimtumo_laikas.id WHERE savaite.id_patalpa = ?',[req.params.id], (err, rows) => {
             connection.release() // return the connection to pool
             if (!err) {
                 res.send(rows)
