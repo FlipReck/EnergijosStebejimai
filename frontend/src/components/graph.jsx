@@ -14,8 +14,6 @@ export default function Graph({ data }) {
 
     //var hours = Array.from(Array(24).keys())
     
-
-    
     if(myChart){
         myChart.clear();
         myChart.destroy();

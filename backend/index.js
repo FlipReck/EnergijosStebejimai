@@ -85,7 +85,59 @@ app.post('/newSensorEntry', function(req, res) {
 app.get('/getHourGraph', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
-        connection.query('SELECT hour(laikas) as hour, AVG(galia) as power FROM `irasai` WHERE id_sensorius = 1 GROUP BY hour(laikas)', (err, rows) => {
+
+        const date = new Date(req.query.date);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+
+        connection.query('SELECT hour(laikas) as hour, AVG(galia) as power FROM irasai INNER JOIN (sensorius INNER JOIN patalpa ON patalpa.id = sensorius.id_patalpa) ON sensorius.id = irasai.id_sensorius WHERE patalpa.id = ? AND year(laikas) = ? AND month(laikas) = ? and day(laikas) = ? GROUP BY hour(laikas)',
+        [req.query.id, year, month, day], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+//Get irasai of a single month, that are grouped by days
+app.get('/getDayGraph', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+
+        const date = new Date(req.query.date);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+
+        connection.query('SELECT day(laikas) as day, AVG(galia) as power FROM irasai INNER JOIN (sensorius INNER JOIN patalpa ON patalpa.id = sensorius.id_patalpa) ON sensorius.id = irasai.id_sensorius WHERE patalpa.id = ? AND year(laikas) = ? AND month(laikas) = ? GROUP BY day(laikas)',
+        [req.query.id, year, month], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+//Get irasai of a single year, that are grouped by months
+app.get('/getDayGraph', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+
+        const date = new Date(req.query.date);
+        const year = date.getFullYear();
+
+        connection.query('SELECT month(laikas) as month, AVG(galia) as power FROM irasai INNER JOIN (sensorius INNER JOIN patalpa ON patalpa.id = sensorius.id_patalpa) ON sensorius.id = irasai.id_sensorius WHERE patalpa.id = ? AND year(laikas) = ? GROUP BY month(laikas)',
+        [req.query.id, year, month], (err, rows) => {
             connection.release() // return the connection to pool
             if (!err) {
                 res.send(rows)
