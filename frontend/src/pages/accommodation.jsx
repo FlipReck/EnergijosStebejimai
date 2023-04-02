@@ -87,6 +87,7 @@ export default function Accommondation() {
                                 <TableCell>
                                     IP adresas
                                 </TableCell>
+                                <TableCell/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -100,6 +101,11 @@ export default function Accommondation() {
                                     </TableCell>
                                     <TableCell>
                                     {row.ip_address}
+                                    </TableCell>
+                                    <TableCell>
+                                    <Button style={{background:"#1DA1F2", color:"white"}}>
+                                        Išjungti 
+                                    </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
