@@ -27,6 +27,7 @@ export default function DayForm() {
           <TextField required fullWidth id="savaites_diena" name="savaites_diena" label="Savaites diena:" variant="outlined" type="text" /><br />
 
           <Button type="submit">Submit</Button>
+          <Button href="/updateDay/8">Update day id=8</Button>
           {/* <Button href="/getDay/100">Get day id=100</Button>
         <Button href="/deleteDay/100" method="delete">Delete day id=100</Button> */}
         </Box>
