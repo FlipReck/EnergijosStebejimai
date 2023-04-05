@@ -85,7 +85,59 @@ app.post('/newSensorEntry', function(req, res) {
 app.get('/getHourGraph', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
-        connection.query('SELECT hour(laikas) as hour, AVG(galia) as power FROM `irasai` WHERE id_sensorius = 1 GROUP BY hour(laikas)', (err, rows) => {
+
+        const date = new Date(req.query.date);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+
+        connection.query('SELECT hour(laikas) as hour, AVG(galia) as power FROM irasai INNER JOIN (sensorius INNER JOIN patalpa ON patalpa.id = sensorius.id_patalpa) ON sensorius.id = irasai.id_sensorius WHERE patalpa.id = ? AND year(laikas) = ? AND month(laikas) = ? and day(laikas) = ? GROUP BY hour(laikas)',
+        [req.query.id, year, month, day], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+//Get irasai of a single month, that are grouped by days
+app.get('/getDayGraph', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+
+        const date = new Date(req.query.date);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+
+        connection.query('SELECT day(laikas) as day, AVG(galia) as power FROM irasai INNER JOIN (sensorius INNER JOIN patalpa ON patalpa.id = sensorius.id_patalpa) ON sensorius.id = irasai.id_sensorius WHERE patalpa.id = ? AND year(laikas) = ? AND month(laikas) = ? GROUP BY day(laikas)',
+        [req.query.id, year, month], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+//Get irasai of a single year, that are grouped by months
+app.get('/getDayGraph', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+
+        const date = new Date(req.query.date);
+        const year = date.getFullYear();
+
+        connection.query('SELECT month(laikas) as month, AVG(galia) as power FROM irasai INNER JOIN (sensorius INNER JOIN patalpa ON patalpa.id = sensorius.id_patalpa) ON sensorius.id = irasai.id_sensorius WHERE patalpa.id = ? AND year(laikas) = ? GROUP BY month(laikas)',
+        [req.query.id, year, month], (err, rows) => {
             connection.release() // return the connection to pool
             if (!err) {
                 res.send(rows)
@@ -137,10 +189,6 @@ app.get('/getAccommendation/:id', (req, res) => {
     })
 });
 
-
-
-
-
 //Update one entry from patalpa by id
 app.post('/updateAccommendation', (req, res) => {
     console.log(req.params.id)
@@ -188,6 +236,23 @@ app.get('/getAllDevices/:id', (req, res) => {
     })
 });
 
+//Get all weeks that belong to patalpa with id
+app.get('/getAllWeeks/:id', (req, res) => {
+    console.log(req.params.id)
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        connection.query('SELECT savaite.id as id, savaite.active as active, diena.savaites_diena as savaites_diena FROM savaite INNER JOIN (savaites_diena INNER JOIN diena ON savaites_diena.id_diena = diena.id) ON savaite.id = savaites_diena.id_savaite WHERE id_patalpa = ?',[req.params.id], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
 
 //Get schedule that belong to patalpa with id
 app.get('/getSchedule/:id', (req, res) => {
@@ -271,25 +336,25 @@ app.post('/newDay', function(req, res) {
 });
 
 //Update one entry from diena by id
-app.post('/updateDay/:id', function(req, res) {
+app.post('/updateDay', function(req, res) {
 
     pool.getConnection((err, connection) => {
         if (err) throw err
 
 
         const savaites_diena = req.body.savaites_diena
-        const id = req.params.id
+        const id = req.body.id
 
         console.log(savaites_diena)
 
         connection.query('UPDATE diena SET savaites_diena = ? WHERE id = ?', [savaites_diena, id], (err, rows) => {
             connection.release() // return the connection to pool
-            if (!err) {
-                console.log(`Day has been added.`)
-                res.redirect('back')
-            } else {
-                console.log(err)
+            if (err){
+                return res.status(500).send('Internal Server Error');
             }
+            res.status(201).json({savaites_diena: savaites_diena})
+
+            console.log('data: \n', rows)
 
         })
 

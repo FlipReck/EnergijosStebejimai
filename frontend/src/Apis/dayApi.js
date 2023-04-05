@@ -4,7 +4,7 @@ export default class dayApi extends Api {
   getAll = () => {
     return super.init().get(`getAllDays`);
   };
-  // get = () => {
-  //   return super.init().get(`getDay/:id`);
-  // };
+  get = (id) => {
+    return super.init().get(`getDay/${id}`);
+  };
 }

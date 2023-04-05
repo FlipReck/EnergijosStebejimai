@@ -12,6 +12,7 @@ import AccommondationForm from './pages/accommondationForm';
 import AccommondationUpdateForm from './pages/accommondationUpdateForm';
 import AccommondationSchedule from './pages/accommondationSchedule';
 import WeekForm from './pages/weekForm';
+import DayUpdateForm from './pages/dayUpdateForm'
 
 function App() {
 
@@ -35,6 +36,9 @@ function App() {
         </Route>
         <Route exact path="/week/new" element={<WeekForm />} />
         <Route exact path="/dayForm" element={<DayForm />} />
+        <Route path="updateDay">
+          <Route path=":id" element={<DayUpdateForm />} />
+        </Route>
         <Route exact path="/timeForm" element={<TimeForm />} />
         <Route path="*" element={<p>Page Not Found</p>}></Route>
       </Routes>
