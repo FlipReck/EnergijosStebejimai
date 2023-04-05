@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import graphApi from "../Apis/graphApi";
 import Graph from "../components/graph";
 import Header from "../components/header";
-import { Typography, Box, Container } from "@mui/material";
+import { Typography, Box, Container, TextField } from "@mui/material";
 
 export default function GraphPage() {
   const [data, setData] = useState(null);
