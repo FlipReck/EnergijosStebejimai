@@ -106,11 +106,10 @@ const MenuProps = {
         <div>
             <Header/>
 
-            <Typography sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl:2 }}>
+            <Container component="main" maxWidth="xs">
+            <Typography className="page-title" sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl: 2 }}>
                 Savaitės forma
             </Typography>
-
-            <Container component="main" maxWidth="xs">
                 <Box
                 sx={{
                 marginTop: 8,

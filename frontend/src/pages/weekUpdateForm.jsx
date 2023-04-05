@@ -154,13 +154,11 @@ const MenuProps = {
     return (
         <div>
             <Header/>
-
-            <Typography sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl:2 }}>
+            <Container component="main" maxWidth="xs">
+            <Typography className="page-title" sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl: 2 }}>
                 Savaitės forma
             </Typography>
-
             {week === null || week === undefined ? <Typography sx={{ textAlign: "center" }}>Wow, so empty!</Typography> :
-            <Container component="main" maxWidth="xs">
                 <Box
                 sx={{
                 marginTop: 8,
@@ -227,8 +225,8 @@ const MenuProps = {
                             Redaguoti
                         </Button>
                     </Box>
-                </Box>
-            </Container>}
+                </Box>}
+            </Container>
         </div>
     );
   }

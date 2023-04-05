@@ -641,7 +641,7 @@ app.get('/weeks/:weekId/days', (req, res) => {
                 return res.status(500).send('Internal Server Error');
             }
             if (Object.keys(rows).length === 0){
-                return res.status(404).send('NotFound')
+                //return res.status(404).send('NotFound')
             }
             res.send(rows);
         });
