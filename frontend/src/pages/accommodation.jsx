@@ -119,11 +119,78 @@ export default function Accommondation() {
                         </Table>
                     )}
                 </Box>
+                
                 <center>
                     <Button style={{ background: "#1DA1F2", color: "white" }}>
                         Ištrinti įspėjimą
                     </Button>
                 </center>
+
+                <Box sx={{ flexGrow: 1, p: 3 }}>
+                {data1 === null || data1.length === 0 ? (
+                    <Typography sx={{ textAlign: "center" }}>Wow, so empty!</Typography>
+                ) : (
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    id
+                                </TableCell>
+                                <TableCell>
+                                    Active
+                                </TableCell>
+                                <TableCell>
+                                    Days
+                                </TableCell>
+                                <TableCell>
+
+                                </TableCell>
+                                <TableCell>
+
+                                </TableCell>
+                                <TableCell>
+
+                                </TableCell>
+                                <TableCell>
+
+                                </TableCell>
+                                <TableCell>
+
+                                </TableCell>
+                                <TableCell>
+
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                                {data2.map((row) => {
+                                    console.log(temp)
+                                    if (temp == row.id) return (
+                                        <TableCell>
+                                            {row.savaites_diena}
+                                        </TableCell>
+                                    )
+                                    else {
+                                        temp = row.id;
+                                        return (
+                                            <TableRow>
+                                            <TableCell component="th" scope="row">
+                                                {row.id}
+                                            </TableCell>
+                                            <TableCell>
+                                                {row.active === 0 ? "off" : "on"}
+                                            </TableCell>
+                                            <TableCell>
+                                                {row.savaites_diena}
+                                            </TableCell>
+                                            </TableRow>
+                                        )
+                                    }
+                                })}
+                        </TableBody>
+                    </Table>
+                )}
+            </Box>
             </Container>
         </div>
     );
