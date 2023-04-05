@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import graphApi from "../Apis/graphApi";
 import Graph from "../components/graph";
 import Header from "../components/header";
-import { Typography, Box, TextField } from "@mui/material";
+import { Typography, Box, Container } from "@mui/material";
 
 export default function GraphPage() {
-    const [data, setData] = useState(null);
+  const [data, setData] = useState(null);
 
     useEffect(() => {
         const getData = async () => {
@@ -21,16 +21,18 @@ export default function GraphPage() {
         getData();
       }, []);
 
-    return (
-        <div>
-            <Header/>
-            <Typography sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl:2 }}>
-                Data graph
-            </Typography>
+  return (
+    <div>
+      <Header />
+      <Container>
+        <Typography className="page-title" sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl: 2 }}>
+          Data graph
+        </Typography>
             <TextField sx={{ py: 5 }} id="test" name="test" label="test:" variant="outlined" type="date" /><br />
-            <Typography sx={{ textAlign: "center" , my: 4}}>Average peak power usage for each hour on 2023-02-15</Typography>
-            <Box sx={{ width: 1000, margin: "0 auto", mb: 4 }}><canvas id="power"></canvas></Box>
-            <Graph data={data}/>
-        </div>
-    );
-  }
+        <Typography sx={{ textAlign: "center", my: 4 }}>Average peak power usage for each hour on 2023-02-15</Typography>
+        <Box sx={{ width: 1000, margin: "0 auto", mb: 4 }}><canvas id="power"></canvas></Box>
+        <Graph data={data} />
+      </Container>
+    </div>
+  );
+}
