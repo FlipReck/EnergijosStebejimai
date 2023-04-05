@@ -22,8 +22,7 @@ export default function Accommondation() {
     const [data1, setData1] = useState(null);
     const [data2, setData2] = useState(null);
     const navigate = useNavigate();
-    let temp = 0;
-
+    let dayTemp = 0;
 
     useEffect(() => {
         const getData = async () => {
@@ -119,7 +118,7 @@ export default function Accommondation() {
                         </Table>
                     )}
                 </Box>
-                
+
                 <center>
                     <Button style={{ background: "#1DA1F2", color: "white" }}>
                         Ištrinti įspėjimą
@@ -127,70 +126,67 @@ export default function Accommondation() {
                 </center>
 
                 <Box sx={{ flexGrow: 1, p: 3 }}>
-                {data1 === null || data1.length === 0 ? (
-                    <Typography sx={{ textAlign: "center" }}>Wow, so empty!</Typography>
-                ) : (
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    id
-                                </TableCell>
-                                <TableCell>
-                                    Active
-                                </TableCell>
-                                <TableCell>
-                                    Days
-                                </TableCell>
-                                <TableCell>
+                    {data1 === null || data1.length === 0 ? (
+                        <Typography sx={{ textAlign: "center" }}>Wow, so empty!</Typography>
+                    ) : (
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>
+                                        id
+                                    </TableCell>
+                                    <TableCell>
+                                        Active
+                                    </TableCell>
+                                    <TableCell>
+                                        Days
+                                    </TableCell>
+                                    <TableCell>
 
-                                </TableCell>
-                                <TableCell>
+                                    </TableCell>
+                                    <TableCell>
 
-                                </TableCell>
-                                <TableCell>
+                                    </TableCell>
+                                    <TableCell>
 
-                                </TableCell>
-                                <TableCell>
+                                    </TableCell>
+                                    <TableCell>
 
-                                </TableCell>
-                                <TableCell>
+                                    </TableCell>
+                                    <TableCell>
 
-                                </TableCell>
-                                <TableCell>
+                                    </TableCell>
+                                    <TableCell>
 
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
                                 {data2.map((row) => {
-                                    console.log(temp)
-                                    if (temp == row.id) return (
-                                        <TableCell>
-                                            {row.savaites_diena}
-                                        </TableCell>
-                                    )
-                                    else {
-                                        temp = row.id;
-                                        return (
-                                            <TableRow>
+                                    dayTemp = row.id;
+                                    return (
+                                        <TableRow>
                                             <TableCell component="th" scope="row">
                                                 {row.id}
                                             </TableCell>
                                             <TableCell>
                                                 {row.active === 0 ? "off" : "on"}
                                             </TableCell>
-                                            <TableCell>
-                                                {row.savaites_diena}
-                                            </TableCell>
-                                            </TableRow>
-                                        )
-                                    }
+                                            {row.savaites_diena.map((row) => {
+                                                return (
+                                                    <TableCell>
+                                                        {row}
+                                                    </TableCell>
+                                                )
+                                            })}
+                                        </TableRow>
+                                    )
+
                                 })}
-                        </TableBody>
-                    </Table>
-                )}
-            </Box>
+                            </TableBody>
+                        </Table>
+                    )}
+                </Box>
             </Container>
         </div>
     );

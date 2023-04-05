@@ -243,13 +243,35 @@ app.get('/getAllWeeks/:id', (req, res) => {
         if (err) throw err
         connection.query('SELECT savaite.id as id, savaite.active as active, diena.savaites_diena as savaites_diena FROM savaite INNER JOIN (savaites_diena INNER JOIN diena ON savaites_diena.id_diena = diena.id) ON savaite.id = savaites_diena.id_savaite WHERE id_patalpa = ?',[req.params.id], (err, rows) => {
             connection.release() // return the connection to pool
+
+            let myArray = [];
+            let weekId = 0;
+            let listCounter = -1;
+        
+            rows.map((row) => {
+                if (weekId == row.id) {
+                    myArray[listCounter].savaites_diena.push(row.savaites_diena);
+                }
+                else {
+                    weekId = row.id;
+                    let myObject = {
+                        id: row.id,
+                        active: row.active,
+                        savaites_diena: [row.savaites_diena]
+                    };
+                    myArray.push(myObject);
+                    listCounter = listCounter + 1; 
+                }
+            });
+            console.log('test: \n', myArray)
+
             if (!err) {
-                res.send(rows)
+                res.send(myArray)
             } else {
                 console.log(err)
             }
 
-            console.log('data: \n', rows)
+            //console.log('data: \n', rows)
         })
     })
 });
