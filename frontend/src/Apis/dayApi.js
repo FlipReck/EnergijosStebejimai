@@ -7,4 +7,12 @@ export default class dayApi extends Api {
   get = (id) => {
     return super.init().get(`getDay/${id}`);
   };
+
+  getAvailableDays = () => {
+    return super.init().get(`availableDays`);
+  };
+
+  // get = () => {
+  //   return super.init().get(`getDay/:id`);
+  // };
 }

@@ -9,6 +9,10 @@ export default class weekApi extends Api {
         return super.init().get(`weeks/${id}`);
     }
 
+    getWeekDays = (id) => {
+        return super.init().get(`weeks/${id}/days`);
+    }
+
     postWeek = (data) => {
         return super.init().post(`weeks`, {
             weekNumber: data.weekId,

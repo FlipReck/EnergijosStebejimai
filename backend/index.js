@@ -400,6 +400,25 @@ app.get('/deleteDay/:id', (req, res) => {
     })
 });
 
+//GET all available days
+app.get('/availableDays', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT diena.* FROM diena WHERE diena.id NOT IN (SELECT savaites_diena.id_diena FROM savaites_diena)', (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (Object.keys(rows).length === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.send(rows);
+        });
+    })
+});
+
 //
 //Uzimtumo_laikas backend
 //
@@ -544,7 +563,7 @@ app.get('/weeks/:weekId', (req, res) => {
             if (Object.keys(rows).length === 0){
                 return res.status(404).send('NotFound')
             }
-            res.send(rows);
+            res.send(rows[0]);
         });
     })
 });
@@ -555,16 +574,14 @@ app.post('/weeks', (req, res) => {
         if (err){
             return res.status(500).send('Internal Server Error');
         }
-        const weekNumber = req.body.weekNumber;
-        const isActive = req.body.isActive;
-        const room = req.body.room;
+        const room = req.body.roomId;
 
-        connection.query('INSERT INTO savaite SET id = ?, active = ?, id_patalpa = ?', [weekNumber, isActive, room], (error, results) => {
+        connection.query('INSERT INTO savaite (active, id_patalpa) VALUES(0, ?)', [room], (error, results) => {
             connection.release();
             if (error){
                 return res.status(500).send('Internal Server Error');
             }
-            res.status(201).json({weekNumber: weekNumber, isActive: isActive, room: room})
+            res.status(201).json({id: results.insertId});
         });
     })
 });
@@ -586,7 +603,7 @@ app.put('/weeks/:weekId', (req, res) => {
                 return res.status(500).send('Internal Server Error');
             }
             if (results.changedRows === 0){
-              return res.status(404).send('NotFound')
+              //return res.status(404).send('NotFound')
           }
             res.status(200).json({weekNumber: weekNumber, isActive: isActive, room: room})
         })
@@ -612,6 +629,66 @@ app.delete('/weeks/:weekId', (req, res) => {
     })
 });
 
+//GET week days
+app.get('/weeks/:weekId/days', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT diena.* FROM savaites_diena LEFT JOIN diena ON savaites_diena.id_diena = diena.id WHERE id_savaite = ?', [req.params.weekId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (Object.keys(rows).length === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.send(rows);
+        });
+    })
+});
+
+//Add days to the week
+app.post('/weeks/addDay', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        const week = req.body.weekId;
+        const day = req.body.dayId;
+
+        connection.query('INSERT INTO savaites_diena (id_savaite, id_diena) VALUES (?, ?)', [week, day], (error, results) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.status(201).json({id: results.insertId, weekId: week, roomId: day});
+        });
+    })
+});
+
+//DELETE savaite entry
+app.delete('/weeks/:weekId/deleteDay', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+
+        const weekId = req.params.weekId;
+        const dayId = req.body.dayId;
+
+        connection.query('DELETE FROM savaites_diena WHERE id_savaite = ? AND id_diena = ?', [weekId, dayId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (rows.affectedRows === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.status(204).end();
+        });
+    })
+});
 
 
 // app.get('/test', (req, res) => {
