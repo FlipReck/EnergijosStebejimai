@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
+import weekApi from "../Apis/weekApi";
 import dayApi from "../Apis/dayApi";
 import accommodationApi from "../Apis/accommodationApi";
 import Header from "../components/header";
@@ -17,6 +19,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -29,11 +32,16 @@ const MenuProps = {
   },
 };
   
-  export default function WeekForm() {
+  export default function WeekUpdateForm() {
     
+    const [week, setWeek] = useState();
+    const [isActive, setIsActive] = useState([])
     const [rooms, setRooms] = useState([]);
     const [days, setDays] = useState([]);
     const [selectedDays, setSelectedDays] = useState([]);
+    const [currentSelectedDays, setCurrentSelectedDays] = useState([]);
+
+    const id = useParams().id;
 
     useEffect(() => {
         const getRooms = async () => {
@@ -42,31 +50,53 @@ const MenuProps = {
                 const response = await api.getAllAccommendation();
                 setRooms(response.data);
             } catch (err) {
+                console.log(err.response.data.message)
                 setRooms(null);
             }
         };
 
-        const getDays = async () => {
+        const getWeek = async (id) => {
             try {
-                const api = new dayApi();
-                const response = await api.getAvailableDays();
-                setDays(response.data);
+                const api = new weekApi();
+                const response = await api.getOneWeek(id);
+                setWeek(response.data);
+                setIsActive(response.data.active === 0 ? false : true);
             } catch (err) {
                 console.log(err.response.data.message)
+                setWeek(null);
+                setIsActive(false);
+            }
+        };
+
+        const getWeekDays = async (id) => {
+            try {
+                const api_day = new dayApi();
+                const api_week = new weekApi();
+
+                const response_day = await api_day.getAvailableDays();
+                const response_week = await api_week.getWeekDays(id);
+
+                setSelectedDays(response_week.data);
+                setCurrentSelectedDays(response_week.data);
+                setDays(response_week.data.concat(response_day.data));
+            } catch (err) {
+                console.log(err.response.data.message)
+                setSelectedDays(null);
+                setCurrentSelectedDays(null);
                 setDays(null);
             }
         };
 
-        getDays();
         getRooms();
-    }, []);
+        getWeek(id);
+        getWeekDays(id);
+
+    }, [id]);
 
       const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
+        const {target: { value }} = event;
 
-      setSelectedDays(
+        setCurrentSelectedDays(
         typeof value === 'string' ? value.split(',') : value,
       );
     };
@@ -74,27 +104,46 @@ const MenuProps = {
     const handleSubmit = (event) => {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
-      postWeek(data.get('roomId'), selectedDays);
+      updateWeek(id, data.get('roomId'), isActive, selectedDays, currentSelectedDays);
     };
 
-    async function postWeek(roomId, days){
-        try{
-            const response = await axios.post("http://127.0.0.1:5000/weeks", {roomId: roomId});
-            const weekId = response.data.id;
+    const handleCheckbox = (event) => {
+        setIsActive(event.target.checked);
+      };
 
-            days.forEach(el => {addWeekDays(weekId, el.id)});
-            window.alert("Savaitė sukurta");
+    async function updateWeek(weekId, roomId, isActive, selectedDays, currentSelectedDays){
+        try{
+            const response = await axios.put(`http://127.0.0.1:5000/weeks/${weekId}`, {
+                isActive: isActive === true ? 1 : 0,
+                room: roomId
+            });
+            if (response.status === 200){
+                selectedDays.forEach(day => {!currentSelectedDays.some(el => day.id === el.id) && deleteWeekDay(weekId, day.id)});
+                currentSelectedDays.forEach(day => {!selectedDays.some(el => day.id === el.id) && addWeekDay(weekId, day.id)});
+            }
+            window.alert("Savaitė pakoreguota");
         } catch (error){
             console.error(error);
             window.alert('klaida');
         }
     }
 
-    async function addWeekDays(weekId, dayId){
+    async function addWeekDay(weekId, dayId){
         try {
             await axios.post("http://127.0.0.1:5000/weeks/addDay", {
                 weekId: weekId,
                 dayId: dayId
+            });
+        } catch (error) {
+            console.error(error);
+            window.alert('klaida');
+        }
+    }
+
+    async function deleteWeekDay(weekId, dayId){
+        try {
+            await axios.delete(`http://127.0.0.1:5000/weeks/${weekId}/deleteDay`, {
+                data : {dayId: dayId}
             });
         } catch (error) {
             console.error(error);
@@ -110,6 +159,7 @@ const MenuProps = {
                 Savaitės forma
             </Typography>
 
+            {week === null || week === undefined ? <Typography sx={{ textAlign: "center" }}>Wow, so empty!</Typography> :
             <Container component="main" maxWidth="xs">
                 <Box
                 sx={{
@@ -127,7 +177,7 @@ const MenuProps = {
                                 id="roomId"
                                 label="Patalpa"
                                 select
-                                defaultValue=""
+                                defaultValue={week.id_patalpa}
                                 >
                                 {rooms.map((option) => (
                                 <MenuItem key={option.id} value={option.id}>
@@ -144,21 +194,29 @@ const MenuProps = {
                                 labelId="weekDays-label"
                                 id="weekDays-checkbox"
                                 multiple
-                                value={selectedDays}
+                                value={currentSelectedDays}
                                 onChange={handleChange}
                                 input={<OutlinedInput label="Dienos" />}
                                 renderValue={(selected) => selected.map((x) => x.savaites_diena).join(', ')}
                                 MenuProps={MenuProps}
                                 >
                                 {days.map((x) => (
-                                    <MenuItem key={x.id} value={x} disabled={selectedDays.some(el => el.savaites_diena === x.savaites_diena) && !selectedDays.some(el => el.id === x.id)}>
-                                    <Checkbox checked={selectedDays.indexOf(x) > -1}/>
+                                    <MenuItem key={x.id} value={x} disabled={currentSelectedDays.some(el => el.savaites_diena === x.savaites_diena) && !currentSelectedDays.some(el => el.id === x.id)}>
+                                    <Checkbox checked={currentSelectedDays.indexOf(x) > -1}/>
                                     <ListItemText primary={x.savaites_diena} />
                                     </MenuItem>
                                 ))}
                                 </Select>
                             </FormControl>
-                            </Grid> 
+                            </Grid>
+
+                            <Grid item xs={12}>
+                            <FormControlLabel
+                                control={<Checkbox checked={isActive}
+                                            onChange={handleCheckbox}/>}
+                                label="Padaryti šią savaitę aktyvią"
+                                />
+                            </Grid>  
                         </Grid>
                         <Button
                             type="submit"
@@ -166,11 +224,11 @@ const MenuProps = {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Pridėti
+                            Redaguoti
                         </Button>
                     </Box>
                 </Box>
-            </Container>
+            </Container>}
         </div>
     );
   }
