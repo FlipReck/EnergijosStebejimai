@@ -79,6 +79,8 @@ export default function Header() {
             <Button href="/data" startIcon={<TableChartIcon />} style={{color:'white', pl:5}}>Sensor Data</Button>
             <Button href="/graph" startIcon={<EqualizerIcon />} style={{color:'white', pl:5}}>Graph</Button>
             <Button href="/accommodation" style={{color:'white', pl:5}}>Patalpos</Button>
+            <Button href="/days" style={{color:'white', pl:5}}>Dienos</Button>
+            <Button href="/weeks" style={{color:'white', pl:5}}>Savaitės</Button>
             </Box>
         </AppBar>
     );
