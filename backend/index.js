@@ -334,26 +334,20 @@ app.get('/getDay/:id', (req, res) => {
 
 //Insert one entry to diena
 app.post('/newDay', function(req, res) {
-
     pool.getConnection((err, connection) => {
-        if (err) throw err
-
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
 
         const savaites_diena = req.body.savaites_diena
 
-        console.log(savaites_diena)
-
-        connection.query('INSERT INTO diena SET savaites_diena = ?', savaites_diena, (err, rows) => {
-            connection.release() // return the connection to pool
-            if (!err) {
-                console.log(`Day has been added.`)
-                res.redirect('back')
-            } else {
-                console.log(err)
+        connection.query('INSERT INTO diena (savaites_diena) VALUES (?)', savaites_diena, (err, rows) => {
+            connection.release()
+            if (err) {
+                return res.status(500).send('Internal Server Error');
             }
-
-        })
-
+            res.status(201).json({id: rows.insertId});
+        });
     })
 });
 
@@ -419,9 +413,45 @@ app.get('/availableDays', (req, res) => {
     })
 });
 
+//Add time to the week
+app.post('/days/:dayId/addtime', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+
+        const day = req.params.dayId;
+        const time = req.body.timeId;
+
+        connection.query('INSERT INTO dienos_laikas (id_diena, id_uzimtumo_laikas) VALUES (?, ?)', [day, time], (error, results) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.status(201).json({id: results.insertId, id_diena: day, id_uzimtumo_laikas: time});
+        });
+    })
+});
+
 //
 //Uzimtumo_laikas backend
 //
+
+//GET all times
+app.get('/times', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT id, TIME_FORMAT(pradzia, "%H:%i") as pradzia, TIME_FORMAT(pabaiga, "%H:%i") as pabaiga, asmenu_kiekis FROM uzimtumo_laikas', (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.send(rows);
+        });
+    })
+});
 
 //GET all entries from uzimtumo_laikas
 app.get('/getAllTime', (req, res) => {
