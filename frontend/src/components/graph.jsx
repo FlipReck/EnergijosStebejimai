@@ -1,80 +1,133 @@
 import {
     Typography,
 } from "@mui/material";
-import Chart from 'chart.js/auto'
+import React, { useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
+import Chart from 'chart.js/auto';
 
-let myChart = null;
+//let myChart = null;
 
-export default function Graph({ data, canvas, type }) {
-    if (data === null || data.length === 0) {
-        return (
-            <Typography sx={{ textAlign: "center" }}>It's empty!</Typography>
-        );
-    }
+const Graph = forwardRef((props, ref) => {
+    const { data, scale } = props;
+    const chartRef = useRef();
+    const chartInstanceRef = useRef();
+
+    // if (data === null || data.length === 0) {
+    //     return (
+    //         <Typography sx={{ textAlign: "center" }}>It's empty!</Typography>
+    //     );
+    // }
 
     //var hours = Array.from(Array(24).keys())
-    
-    if(myChart){
-        myChart.clear();
-        myChart.destroy();
-    }
-    if (type == "day") {
-        myChart = new Chart(
-            document.getElementById(canvas).getContext('2d'),
-            {
-                type: 'bar',
-                data: {
-                    labels: data.map(row => row.hour),
-                    datasets: [
-                        {
-                            label: 'avrg power',
-                            data: data.map(row => row.power)
-                        }
-                    ],
-                    
-                }
-            }
-        );
-    }
-    else if (type == "month") {
-        myChart = new Chart(
-            document.getElementById(canvas).getContext('2d'),
-            {
-                type: 'bar',
-                data: {
-                    labels: data.map(row => row.day),
-                    datasets: [
-                        {
-                            label: 'avrg power',
-                            data: data.map(row => row.power)
-                        }
-                    ],
-                    
-                }
-            }
-        );
-    }
-    else if (type == "year") {
-        myChart = new Chart(
-            document.getElementById(canvas).getContext('2d'),
-            {
-                type: 'bar',
-                data: {
-                    labels: data.map(row => row.month),
-                    datasets: [
-                        {
-                            label: 'avrg power',
-                            data: data.map(row => row.power)
-                        }
-                    ],
-                    
-                }
-            }
-        );
-    }
-    
 
-    return (
-        <></>
-    );
-}
+    // if (myChart) {
+    //     myChart.clear();
+    //     myChart.destroy();
+    // }
+
+    // myChart = new Chart(
+    //     document.getElementById(canvas).getContext('2d'),
+    //     {
+    //         type: 'bar',
+    //         data: {
+    //             labels: data.map(row => row.time),
+    //             datasets: [
+    //                 {
+    //                     label: 'avrg power',
+    //                     data: data.map(row => row.power)
+    //                 }
+    //             ],
+
+    //         },
+    //         options: {
+    //             scales: {
+    //               x: {
+    //                 title: {
+    //                     display: true,
+    //                     text: scale
+    //                 }
+    //               },
+    //               y: {
+    //                 title: {
+    //                     display: true,
+    //                     text: 'Average power'
+    //                 }
+    //               }
+    //             }
+    //           }
+    //     }
+    // );
+
+    useImperativeHandle(ref, () => ({
+        updateData: (newData) => {
+            const chartInstance = chartInstanceRef.current;
+
+            if (chartInstance) {
+                console.log(chartInstance.data.datasets[0].data);
+                console.log(newData.map(row => row.power));
+                chartInstance.data.labels = newData.map(row => row.time);
+                chartInstance.data.datasets[0].data = newData.map(row => row.power);
+                chartInstance.update();
+            }
+        },
+    }));
+
+    useEffect(() => {
+        let chartInstance;
+        if (data === null || data.length === 0) {
+            chartInstance = new Chart(chartRef.current, {
+                type: 'line',
+                data: {
+                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                    datasets: [
+                        {
+                            label: 'My dataset',
+                            data: [0, 10, 5, 2, 20, 30, 45],
+                            borderColor: 'red',
+                            fill: false,
+                        },
+                    ],
+                },
+            });
+        }
+        else {
+            chartInstance = new Chart(chartRef.current, {
+                type: 'bar',
+                data: {
+                    labels: data.map(row => row.time),
+                    datasets: [
+                        {
+                            label: 'avrg power',
+                            data: data.map(row => row.power)
+                        }
+                    ],
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: scale
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Average power'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        chartInstanceRef.current = chartInstance;
+
+        return () => {
+            chartInstance.destroy();
+        };
+    }, [data, scale]);
+
+    return <canvas ref={chartRef} />;
+});
+
+export default Graph;

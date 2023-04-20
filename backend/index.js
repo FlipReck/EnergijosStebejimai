@@ -102,7 +102,7 @@ app.get('/getHourGraph', (req, res) => {
                 for (let i = 0; i < 24; i++) {
                     if (rows.length > listCounter && rows[listCounter].hour == i) {
                         let myObject = {
-                            hour: i,
+                            time: i,
                             power: rows[listCounter].power
                         };
                         //console.log(myObject);
@@ -111,7 +111,7 @@ app.get('/getHourGraph', (req, res) => {
                     }
                     else {
                         let myObject = {
-                            hour: i,
+                            time: i,
                             power: 0
                         };
                         //console.log(myObject);
@@ -150,7 +150,7 @@ app.get('/getDayGraph', (req, res) => {
                 for (let i = 0; i < new Date(year, month, 0).getDate(); i++) {
                     if (rows.length > listCounter && rows[listCounter].day == i) {
                         let myObject = {
-                            day: i,
+                            time: i,
                             power: rows[listCounter].power
                         };
                         //console.log(myObject);
@@ -159,7 +159,7 @@ app.get('/getDayGraph', (req, res) => {
                     }
                     else {
                         let myObject = {
-                            day: i,
+                            time: i,
                             power: 0
                         };
                         //console.log(myObject);
@@ -198,7 +198,7 @@ app.get('/getMonthGraph', (req, res) => {
                 for (let i = 1; i <= 12; i++) {
                     if (rows.length > listCounter && rows[listCounter].month == i) {
                         let myObject = {
-                            month: i,
+                            time: i,
                             power: rows[listCounter].power
                         };
                         console.log(myObject);
@@ -207,7 +207,7 @@ app.get('/getMonthGraph', (req, res) => {
                     }
                     else {
                         let myObject = {
-                            month: i,
+                            time: i,
                             power: 0
                         };
                         console.log(myObject);
