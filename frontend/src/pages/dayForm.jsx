@@ -94,7 +94,7 @@ const checkTime = (day) => {
 
         <Container component="main" maxWidth="xs">
         <Typography className="page-title" sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl: 2 }}>
-            Dienos forma
+            Dienos laiko kūrimo forma
         </Typography>
             <Box
               sx={{alignItems: 'center'}}
