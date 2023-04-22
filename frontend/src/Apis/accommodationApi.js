@@ -16,4 +16,13 @@ export default class accommodationApi extends Api {
   getSchedule = (id) => {
     return super.init().get(`getSchedule/${id}`);
   };
+  getAllTime = () => {
+    return super.init().get(`times`);
+  };
+  newPatalpa = (pavadinimas, atsakingo_asmens_vardas, atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu) => {
+    return super.init().post(`newPatalpa?pavadinimas=${pavadinimas}&atsakingo_asmens_vardas=${atsakingo_asmens_vardas}&atsakingo_asmens_pavarde=${atsakingo_asmens_pavarde}&atsakingo_asmens_kontaktas=${atsakingo_asmens_kontaktas}&kompiuteriu_kiekis=${kompiuteriu_kiekis}&energijos_riba_per_zmogu=${energijos_riba_per_zmogu}`);
+  };
+  getAccommodationTimes = (id) => {
+    return super.init().get(`getAccommodationTimes?id=${id}`);
+  };
 }

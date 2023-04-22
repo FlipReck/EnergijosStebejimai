@@ -21,6 +21,8 @@ export default function Accommondation() {
     const [data, setData] = useState(null);
     const [data1, setData1] = useState(null);
     const [data2, setData2] = useState(null);
+    const [time, setTime] = useState(null);
+    const [occupiedTimes, setOccupiedTimes] = useState(null);
     const navigate = useNavigate();
     let dayTemp = 0;
 
@@ -31,9 +33,13 @@ export default function Accommondation() {
                 const response = await repApi.getAccommendation(id);
                 const response1 = await repApi.getAllDevices(id);
                 const response2 = await repApi.getAllWeeks(id);
+                const response3 = await repApi.getAllTime();
+                const response4 = await repApi.getAccommodationTimes(id);
                 setData(response.data);
                 setData1(response1.data);
                 setData2(response2.data);
+                setTime(response3.data);
+                setOccupiedTimes(response4.data);
             } catch (err) {
                 console.log(err.response.data.message)
                 setData(null);
@@ -41,6 +47,18 @@ export default function Accommondation() {
         };
         getData();
     }, []);
+
+    function checking(uz_laikas, diena, extension)
+    {
+        var hold = occupiedTimes.filter(x => x.id_uzimtumo_laikas === uz_laikas && x.savaites_diena === diena)
+        if(hold !== undefined && hold !== null && hold.length !== 0)
+        {
+            // var tag = (uz_laikas-1).toString()+ extension
+            // console.log(tag)
+            // document.getElementById(tag).style.backroundColor = "#1DA1F2";
+            return "busy";
+        }
+    }
 
     return (
         <div>
@@ -133,52 +151,59 @@ export default function Accommondation() {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>
-                                        id
+                                        
                                     </TableCell>
                                     <TableCell>
-                                        Active
+                                        Pimadienis
                                     </TableCell>
                                     <TableCell>
-                                        Days
+                                        Antradienis
                                     </TableCell>
                                     <TableCell>
-
+                                        Trečiadienis
                                     </TableCell>
                                     <TableCell>
-
+                                        Ketvirtadienis
                                     </TableCell>
                                     <TableCell>
-
+                                        Penktadienis
                                     </TableCell>
                                     <TableCell>
-
+                                        Šeštadienis
                                     </TableCell>
                                     <TableCell>
-
-                                    </TableCell>
-                                    <TableCell>
-
+                                        Sekmadienis
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {data2.map((row) => {
-                                    dayTemp = row.id;
+                                {time.map((row, index) => {
                                     return (
                                         <TableRow>
                                             <TableCell component="th" scope="row">
-                                                {row.id}
+                                                {row.pradzia} - {row.pabaiga}
                                             </TableCell>
-                                            <TableCell>
-                                                {row.active === 0 ? "off" : "on"}
+                                            <TableCell  id={index+"t1"}>
+                                                {(checking(index+1, 'Pirmadienis', "t1"))}
                                             </TableCell>
-                                            {row.savaites_diena.map((row) => {
-                                                return (
-                                                    <TableCell>
-                                                        {row}
-                                                    </TableCell>
-                                                )
-                                            })}
+                                            <TableCell  id={index+"t2"}>
+                                                {checking(index+1, 'Antradienis', "t2")}
+                                            </TableCell>
+                                            <TableCell  id={index+"t3"}>
+                                                {checking(index+1, 'Trečiadienis', "t3")}
+                                            </TableCell>
+                                            <TableCell  id={index+"t4"}>
+                                                {checking(index+1, 'Ketvirtadienis', "t4")}
+                                            </TableCell>
+                                            <TableCell  id={index+"t5"}>
+                                                {checking(index+1, 'Penktadienis', "t5")}
+                                            </TableCell>
+                                            <TableCell  id={index+"t6"}>
+                                                {checking(index+1, 'Šeštadienis', "t6")}
+                                            </TableCell>
+                                            <TableCell  id={index+"t7"}>
+                                                {checking(index+1, 'Sekmadienis', "t7")}
+                                            </TableCell>
                                         </TableRow>
                                     )
 

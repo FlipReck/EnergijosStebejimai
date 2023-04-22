@@ -57,6 +57,26 @@ app.get('/getAll', (req, res) => {
     })
 });
 
+app.get('/getAccommodationTimes', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+
+        const id = req.query.id
+        
+        connection.query('SELECT dienos_laikas.*, diena.savaites_diena FROM savaite LEFT JOIN savaites_diena ON savaite.id=savaites_diena.id_savaite LEFT JOIN diena ON diena.id=savaites_diena.id_diena LEFT JOIN dienos_laikas ON dienos_laikas.id_diena=diena.id WHERE savaite.id_patalpa=? AND savaite.active=1', [id], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+                res.send(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
 //Insert one entry to irasas
 app.post('/newSensorEntry', function(req, res) {
 
@@ -831,6 +851,33 @@ app.delete('/weeks/:weekId/deleteDay', (req, res) => {
     })
 });
 
+//Insert one entry to uzimtumo_laikas
+app.post('/newPatalpa', function(req, res) {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+
+
+        const pavadinimas = req.query.pavadinimas
+        const atsakingo_asmens_vardas = req.query.atsakingo_asmens_vardas
+        const atsakingo_asmens_pavarde = req.query.atsakingo_asmens_pavarde
+        const atsakingo_asmens_kontaktas = req.query.atsakingo_asmens_kontaktas
+        const kompiuteriu_kiekis = req.query.kompiuteriu_kiekis
+        const energijos_riba_per_zmogu = req.query.energijos_riba_per_zmogu
+
+        connection.query('INSERT INTO patalpa(pavadinimas, atsakingo_asmens_vardas,atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu) VALUES(?,?,?,?,?,?)',
+         [pavadinimas, atsakingo_asmens_vardas, atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                console.log(`Patalpa has been added.`)
+                res.send(rows)
+                // res.redirect('back')
+            } else {
+                console.log(err)
+            }
+        })
+
+    })
+});
 
 // app.get('/test', (req, res) => {
 //     observationsControler.getAllObservations,
