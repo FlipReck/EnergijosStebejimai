@@ -316,6 +316,45 @@ app.post('/updateAccommendation', (req, res) => {
     })
 });
 
+//POST prietaisai entry
+app.post('/accommodations/:id/devices', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        const room = req.params.id;
+        const deviceName = req.body.deviceName;
+        const address = req.body.ipAddress;
+
+        connection.query('INSERT INTO prietaisai (id_patalpa, name, ip_address) VALUES(?, ?, ?)', [room, deviceName, address], (error, results) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.status(201).json({id: results.insertId});
+        });
+    })
+});
+
+//DELETE prietaisai entry
+app.delete('/devices/:id', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('DELETE FROM prietaisai WHERE id = ?', [req.params.id], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (rows.affectedRows === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.status(204).end();
+        });
+    })
+});
+
 //Get all prietaisai that belong to patalpa with id
 app.get('/getAllDevices/:id', (req, res) => {
     console.log(req.params.id)

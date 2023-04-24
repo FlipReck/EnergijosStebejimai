@@ -18,6 +18,7 @@ import {
     TableRow,
 } from "@mui/material";
 import { Container } from "@mui/system";
+import DevicesTable from "../components/accommodationDevicesTable";
 
 export default function Accommondation() {
     const { id } = useParams();
@@ -70,6 +71,7 @@ export default function Accommondation() {
 
         getData();
         getEntries();
+        console.log('effect');
     }, []);
 
     function checking(uz_laikas, diena, extension)
@@ -95,17 +97,17 @@ export default function Accommondation() {
                     <Typography sx={{ textAlign: "center" }}>Wow, so empty!</Typography>
                 ) : (
                     <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, gap: 3 }}>
-                        {console.log(data)}
+                        {/* {console.log(data)} */}
                         <List>
                             <ListItem>Pavadinimas</ListItem>
                             <ListItem>Atsakingas asmuo</ListItem>
                             <ListItem>Atsakingo asmens kontaktas</ListItem>
                             <ListItem>Kompiuterių kiekis</ListItem>
                             <ListItem>Energijos riba per žmogų</ListItem>
-                            <ListItem><Button style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`/accommodation/update/${id}`)}>
+                            <ListItem><Button style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`update`)}>
                                 Redaguoti
                             </Button></ListItem>
-                            <ListItem><Button style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`/accommodation/schedule/${id}`)}>
+                            <ListItem><Button style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`schedule`)}>
                                 Patalpos tvarkaraštis
                             </Button></ListItem>
                         </List>
@@ -119,48 +121,8 @@ export default function Accommondation() {
                     </Box>)}
                     <Typography sx={{ textAlign: "center" }}>Šiandienos momentinių enegijos sąnaudų diagrama</Typography>
                     <Graph ref={chartRef} data={entries} scale={"Valanda"} />
-                <Box sx={{ flexGrow: 1, p: 3 }}>
-                    {data1 === null || data1.length === 0 ? (
-                        <Typography sx={{ textAlign: "center" }}>Wow, so empty!</Typography>
-                    ) : (
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>
-                                        id
-                                    </TableCell>
-                                    <TableCell>
-                                        prietaiso pavadinimas
-                                    </TableCell>
-                                    <TableCell>
-                                        IP adresas
-                                    </TableCell>
-                                    <TableCell />
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {data1.map((row) => (
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            {row.id}
-                                        </TableCell>
-                                        <TableCell>
-                                            {row.name}
-                                        </TableCell>
-                                        <TableCell>
-                                            {row.ip_address}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button style={{ background: "#1DA1F2", color: "white" }}>
-                                                Išjungti
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    )}
-                </Box>
+
+                <DevicesTable data1={data1} navigate={navigate} setData1={setData1}/>
 
                 <center>
                     <Button style={{ background: "#1DA1F2", color: "white" }}>
@@ -204,7 +166,7 @@ export default function Accommondation() {
                             <TableBody>
                                 {time.map((row, index) => {
                                     return (
-                                        <TableRow>
+                                        <TableRow key={row.id}>
                                             <TableCell component="th" scope="row">
                                                 {row.pradzia} - {row.pabaiga}
                                             </TableCell>

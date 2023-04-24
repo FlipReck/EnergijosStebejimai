@@ -16,6 +16,7 @@ import AccommondationSchedule from './pages/accommondationSchedule';
 import WeekForm from './pages/weekForm';
 import DayUpdateForm from './pages/dayUpdateForm'
 import WeekUpdateForm from './pages/weekUpdateForm';
+import DeviceForm from './pages/deviceForm'
 
 function App() {
 
@@ -30,13 +31,13 @@ function App() {
         <Route exact path="/sensorForm" element={<SensorForm />} />
         <Route path="accommodation">
           <Route index element={<AccommondationList />} />
-          <Route path=":id" element={<Accommondation />} />
           <Route path="new" element={<AccommondationForm />} />
-          <Route path="update">
-            <Route path=":id" element={<AccommondationUpdateForm />} />
-          </Route>
-          <Route path="schedule">
-            <Route path=":id" element={<AccommondationSchedule />} />
+
+          <Route path=":id">
+            <Route index element={<Accommondation />} />
+            <Route path="update" element={<AccommondationUpdateForm />} />
+            <Route path="schedule" element={<AccommondationSchedule />} />
+            <Route path="addDevice" element={<DeviceForm />} />
           </Route>
         </Route>
         <Route path="week">
