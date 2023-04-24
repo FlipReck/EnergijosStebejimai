@@ -1,9 +1,12 @@
 import Header from "../components/header";
+import React, { useRef } from 'react';
 import { useEffect, useState } from "react";
 import { Button, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import accommodationApi from "../Apis/accommodationApi";
+import graphApi from "../Apis/graphApi";
+import Graph from "../components/graph";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Box from "@mui/material/Box";
@@ -23,7 +26,9 @@ export default function Accommondation() {
     const [data2, setData2] = useState(null);
     const [time, setTime] = useState(null);
     const [occupiedTimes, setOccupiedTimes] = useState(null);
+    const [entries, setEntries] = useState([]);
     const navigate = useNavigate();
+    const chartRef = useRef();
     let dayTemp = 0;
 
     useEffect(() => {
@@ -45,7 +50,26 @@ export default function Accommondation() {
                 setData(null);
             }
         };
+
+        const getEntries = async () => {
+            try {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = (today.getMonth() + 1).toString().padStart(2, '0');
+                const day = today.getDate().toString().padStart(2, '0');
+                const todayString = `${year}-${month}-${day}`;
+                const grphApi = new graphApi();
+                const response = await grphApi.getHourGraph(id, todayString);
+                setEntries(response.data);
+                console.log(todayString)
+            } catch (err) {
+                console.log(err.response.data.message)
+                setEntries(null);
+            }
+          };
+
         getData();
+        getEntries();
     }, []);
 
     function checking(uz_laikas, diena, extension)
@@ -92,8 +116,9 @@ export default function Accommondation() {
                             <ListItem>{data[0].kompiuteriu_kiekis}</ListItem>
                             <ListItem>{data[0].energijos_riba_per_zmogu}</ListItem>
                         </List>
-
                     </Box>)}
+                    <Typography sx={{ textAlign: "center" }}>Šiandienos momentinių enegijos sąnaudų diagrama</Typography>
+                    <Graph ref={chartRef} data={entries} scale={"Valanda"} />
                 <Box sx={{ flexGrow: 1, p: 3 }}>
                     {data1 === null || data1.length === 0 ? (
                         <Typography sx={{ textAlign: "center" }}>Wow, so empty!</Typography>

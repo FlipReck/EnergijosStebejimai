@@ -58,14 +58,17 @@ const Graph = forwardRef((props, ref) => {
     // );
 
     useImperativeHandle(ref, () => ({
-        updateData: (newData) => {
+        updateData: (newData, title) => {
             const chartInstance = chartInstanceRef.current;
 
             if (chartInstance) {
                 console.log(chartInstance.data.datasets[0].data);
                 console.log(newData.map(row => row.power));
+                console.log(chartInstance.options.scales.x.title.text);
                 chartInstance.data.labels = newData.map(row => row.time);
                 chartInstance.data.datasets[0].data = newData.map(row => row.power);
+                chartInstance.options.scales.x.title.text = title;
+                //chartInstance.options.scales.x.title
                 chartInstance.update();
             }
         },
@@ -96,7 +99,7 @@ const Graph = forwardRef((props, ref) => {
                     labels: data.map(row => row.time),
                     datasets: [
                         {
-                            label: 'avrg power',
+                            label: 'vid. galia',
                             data: data.map(row => row.power)
                         }
                     ],
@@ -112,7 +115,7 @@ const Graph = forwardRef((props, ref) => {
                         y: {
                             title: {
                                 display: true,
-                                text: 'Average power'
+                                text: 'Vidutinė galia'
                             }
                         }
                     }

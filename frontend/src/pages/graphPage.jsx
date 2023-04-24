@@ -61,15 +61,18 @@ export default function GraphPage() {
     let response;
     if (type === 'Metai') {
       response = await grphApi.getMonthGraph(accom, date);
+      chartRef.current.updateData(response.data, 'Mėnuo');
     }
     else if (type === 'Menuo') {
       response = await grphApi.getDayGraph(accom, date);
+      chartRef.current.updateData(response.data, 'Diena');
     }
     else if (type === 'Diena') {
       response = await grphApi.getHourGraph(accom, date);
+      chartRef.current.updateData(response.data, 'Valanda');
     }
     console.log(response.data);
-    chartRef.current.updateData(response.data);
+    
   }
 
   return (

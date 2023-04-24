@@ -19,19 +19,16 @@ export default function DataTable({data}) {
             <TableHead>
              <TableRow>
               <TableCell>
-                id
+                Sensoriaus Id
               </TableCell>
               <TableCell>
-                sensor Id
+                Momentinė galia
               </TableCell>
               <TableCell>
-                power
+                Sąnaudos
               </TableCell>
               <TableCell>
-                useage
-              </TableCell>
-              <TableCell>
-                reading time
+                Duomenų perkaitymo laikas
               </TableCell>
              </TableRow>
             </TableHead>
@@ -39,9 +36,6 @@ export default function DataTable({data}) {
               {data.map((row) => (
               <TableRow>
                 <TableCell component="th" scope="row">
-                 {row.id}
-                </TableCell>
-                <TableCell>
                  {row.id_sensorius}
                 </TableCell>
                 <TableCell>
