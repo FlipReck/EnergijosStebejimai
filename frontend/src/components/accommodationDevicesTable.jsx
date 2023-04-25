@@ -11,7 +11,6 @@ import {
 import axios from "axios";
 
 export default function DevicesTable({data1, setData1, navigate}){
-console.log('rerender');
     function deleteButtonHandle(id){
         if (window.confirm("Ar tikrai norite ištrinti prietaisą?")){
             deleteDevice(id);
@@ -33,18 +32,14 @@ console.log('rerender');
 
     return (
         <Box sx={{ flexGrow: 1, p: 3 }}>
-
+            <Typography sx={{ textAlign: "center" }}>Prietaisai</Typography>
+            <Box sx={{mb: 1}} display="flex" justifyContent="flex-end" >
+                <Button style={{ background: "#1DA1F2", color: "white" }} 
+                    onClick={() => navigate(`addDevice`)}>Pridėti prietasą</Button>
+            </Box>
                     {data1 === null || data1.length === 0 ? (
-                        <Typography sx={{ textAlign: "center" }}>Wow, so empty!</Typography>
+                        <Typography sx={{ textAlign: "center" }}>Nėra pridėtų prietaisų</Typography>
                     ) : (
-                        <div>
-                        <Typography sx={{ textAlign: "center" }}>Prietaisai</Typography>
-
-                        <Box sx={{mb: 1}} display="flex" justifyContent="flex-end" >
-                            <Button style={{ background: "#1DA1F2", color: "white" }} 
-                                onClick={() => navigate(`addDevice`)}>Pridėti prietasą</Button>
-                        </Box>
-
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -72,7 +67,7 @@ console.log('rerender');
                                                 Išjungti
                                             </Button>
 
-                                            <Button style={{ background: "#1DA1F2", color: "white" }}
+                                            <Button style={{ background: "crimson", color: "white" }}
                                                 onClick={() => deleteButtonHandle(row.id)}>
                                                 Ištrinti
                                             </Button>
@@ -81,7 +76,6 @@ console.log('rerender');
                                 ))}
                             </TableBody>
                         </Table>
-                        </div>
                     )}
                 </Box>
     )

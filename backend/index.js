@@ -316,6 +316,26 @@ app.post('/updateAccommendation', (req, res) => {
     })
 });
 
+
+//DELETE accommodation entry
+app.delete('/accommodations/:id', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('DELETE FROM patalpa WHERE id = ?', [req.params.id], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (rows.affectedRows === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.status(204).end();
+        });
+    })
+});
+
 //POST prietaisai entry
 app.post('/accommodations/:id/devices', (req, res) => {
     pool.getConnection((err, connection) => {

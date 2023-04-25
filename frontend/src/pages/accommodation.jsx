@@ -2,8 +2,7 @@ import Header from "../components/header";
 import React, { useRef } from 'react';
 import { useEffect, useState } from "react";
 import { Button, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import accommodationApi from "../Apis/accommodationApi";
 import graphApi from "../Apis/graphApi";
 import Graph from "../components/graph";
@@ -19,6 +18,7 @@ import {
 } from "@mui/material";
 import { Container } from "@mui/system";
 import DevicesTable from "../components/accommodationDevicesTable";
+import axios from "axios";
 
 export default function Accommondation() {
     const { id } = useParams();
@@ -71,7 +71,6 @@ export default function Accommondation() {
 
         getData();
         getEntries();
-        console.log('effect');
     }, []);
 
     function checking(uz_laikas, diena, extension)
@@ -83,6 +82,25 @@ export default function Accommondation() {
             // console.log(tag)
             // document.getElementById(tag).style.backroundColor = "#1DA1F2";
             return "busy";
+        }
+    }
+
+    function deleteButtonHandle(id){
+        if (window.confirm("Ar tikrai norite ištrinti patalpą?")){
+            deleteAccommodation(id);
+        }
+    }
+
+    async function deleteAccommodation(accommodationId){
+        try {
+            const response = await axios.delete(`http://127.0.0.1:5000/accommodations/${accommodationId}`);
+            if (response.status === 204){
+                window.alert("Patalpa pašalinta");
+                navigate(`/accommodation`);
+            }
+        } catch (error) {
+            console.error(error);
+            window.alert('Nepavyko pašalinti prietaiso');
         }
     }
 
@@ -104,12 +122,17 @@ export default function Accommondation() {
                             <ListItem>Atsakingo asmens kontaktas</ListItem>
                             <ListItem>Kompiuterių kiekis</ListItem>
                             <ListItem>Energijos riba per žmogų</ListItem>
-                            <ListItem><Button style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`update`)}>
+                            <ListItem><Button sx={{mr: 1}} style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`update`)}>
                                 Redaguoti
-                            </Button></ListItem>
+                            </Button>
+                            <Button style={{ background: "crimson", color: "white" }} onClick={() => deleteButtonHandle(data[0].id)}>
+                                Ištrinti patalpą
+                            </Button>
+                            </ListItem>
                             <ListItem><Button style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`schedule`)}>
                                 Patalpos tvarkaraštis
-                            </Button></ListItem>
+                            </Button>
+                            </ListItem>
                         </List>
                         <List>
                             <ListItem>{data[0].pavadinimas}</ListItem>
