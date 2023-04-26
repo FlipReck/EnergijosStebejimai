@@ -38,6 +38,9 @@ function App() {
             <Route path="update" element={<AccommondationUpdateForm />} />
             <Route path="schedule" element={<AccommondationSchedule />} />
             <Route path="addDevice" element={<DeviceForm />} />
+            <Route path="editDevice">
+              <Route path=":deviceId" element={<DeviceForm />} />
+            </Route>
           </Route>
         </Route>
         <Route path="week">

@@ -356,6 +356,27 @@ app.post('/accommodations/:id/devices', (req, res) => {
     })
 });
 
+//PATCH prietaisai entry
+app.patch('/accommodations/:id/devices/:device_id/update', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        const room = req.params.id;
+        const deviceName = req.body.deviceName;
+        const address = req.body.ipAddress;
+        const deviceId = req.params.device_id;
+
+        connection.query(`UPDATE prietaisai SET id_patalpa = ?, name = ?, ip_address = ? WHERE id = ?`, [room, deviceName, address, deviceId], (error, results) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.status(201).json({id: results.insertId});
+        });
+    })
+});
+
 //DELETE prietaisai entry
 app.delete('/devices/:id', (req, res) => {
     pool.getConnection((err, connection) => {
@@ -381,6 +402,24 @@ app.get('/getAllDevices/:id', (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err
         connection.query('SELECT * FROM prietaisai WHERE id_patalpa = ?',[req.params.id], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (!err) {
+                res.send(rows)
+            } else {
+                console.log(err)
+            }
+
+            console.log('data: \n', rows)
+        })
+    })
+});
+
+//Get one prietaisai by id
+app.get('/getDevice/:id', (req, res) => {
+    console.log(req.params.id)
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        connection.query('SELECT * FROM prietaisai WHERE id = ?',[req.params.id], (err, rows) => {
             connection.release() // return the connection to pool
             if (!err) {
                 res.send(rows)

@@ -8,14 +8,36 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import accommodationApi from '../Apis/accommodationApi';
   
   export default function DeviceForm() {
 
     const id = useParams().id;
+    const deviceId = useParams().deviceId;
+
+    const [name, setName] = useState('');
+    const [ipAddress, setIpAddress] = useState('');
+    const [validation, setValidation] = useState(false);
+
     const navigate = useNavigate();
 
-    const [validation, setValidation] = useState(false);
+    useEffect(() => {
+        if (deviceId) {
+            const getData = async () => {
+                try {
+                    const repApi = new accommodationApi();
+                    const response = await repApi.getDevice(id);
+                    setName(response.data[0].name);
+                    setIpAddress(response.data[0].ip_address);
+                } catch (err) {
+                    console.log(err.response.data.message)
+                }
+            };
+            getData();
+        }
+    }, []);
+
 
     const handleSubmit = (event) => {
       event.preventDefault();
@@ -26,7 +48,11 @@ import { useState } from "react";
       }
       else
       {
-        postDevice(id, data.get('computer'), data.get('address'));
+        if(deviceId){
+            patchDevice(id, data.get('computer'), data.get('address'), deviceId);
+        } else {
+            postDevice(id, data.get('computer'), data.get('address'));
+        }
       }
     };
 
@@ -39,6 +65,22 @@ import { useState } from "react";
         return (false)
     }
 
+    async function patchDevice(roomId, computerName, ipAddress, deviceId){
+        try{
+            const response = await axios.patch(`http://127.0.0.1:5000/accommodations/${roomId}/devices/${deviceId}/update`, {
+                deviceName: computerName,
+                ipAddress: ipAddress
+            });
+            if (response.status === 201){
+                window.alert("Prietaisas redaguotas");
+                navigate(-1);
+            }
+            
+        } catch (error){
+            console.error(error);
+            window.alert('Nepavyko redaguoti prietaiso');
+        }
+    }
     async function postDevice(roomId, computerName, ipAddress){
         try{
             const response = await axios.post(`http://127.0.0.1:5000/accommodations/${roomId}/devices`, {
@@ -55,14 +97,13 @@ import { useState } from "react";
             window.alert('Nepavyko pridėti prietaiso');
         }
     }
-
     return (
         <div>
             <Header/>
 
             <Container component="main" maxWidth="xs">
             <Typography className="page-title" sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl: 2 }}>
-                Prietaiso pridėjimas
+                Prietaiso {deviceId ? 'redagavimas' : 'pridėjimas'}
             </Typography>
                 <Box
                 sx={{
@@ -79,7 +120,8 @@ import { useState } from "react";
                                 fullWidth
                                 id="computer"
                                 label="Prietaiso pavadinimas"
-                                defaultValue=""
+                                value={name}
+                                onChange={(event) => {setName(event.target.value)}}
                                 />
                             </Grid>
 
@@ -90,7 +132,8 @@ import { useState } from "react";
                                 fullWidth
                                 id="address"
                                 label="Prietaiso IP adresas"
-                                defaultValue=""
+                                value={ipAddress}
+                                onChange={(event) => {setIpAddress(event.target.value)}}
                                 error={validation}
                                 helperText={validation === false ? "" : "Netinkamas IP adresas"}
                                 />
@@ -102,7 +145,7 @@ import { useState } from "react";
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Pridėti
+                            {deviceId ? 'Redaguoti' : 'Pridėti'}
                         </Button>
                     </Box>
                 </Box>

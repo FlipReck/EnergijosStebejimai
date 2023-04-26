@@ -67,6 +67,10 @@ export default function DevicesTable({data1, setData1, navigate}){
                                                 Išjungti
                                             </Button>
 
+                                            <Button  sx={{mr: 1}} style={{ background: "crimson", color: "white" }}
+                                                onClick={() => navigate(`/accommodation/${row.id_patalpa}/editDevice/${row.id}`)}>
+                                                Redaguoti
+                                            </Button>
                                             <Button style={{ background: "crimson", color: "white" }}
                                                 onClick={() => deleteButtonHandle(row.id)}>
                                                 Ištrinti
