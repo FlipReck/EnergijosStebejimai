@@ -514,8 +514,9 @@ app.post('/newDay', function(req, res) {
         }
 
         const savaites_diena = req.body.savaites_diena
+        const sav_dienos_nr = req.body.sav_dienos_nr
 
-        connection.query('INSERT INTO diena (savaites_diena) VALUES (?)', savaites_diena, (err, rows) => {
+        connection.query('INSERT INTO diena (savaites_diena, sav_dienos_nr) VALUES(?, ?)', [savaites_diena, sav_dienos_nr], (err, rows) => {
             connection.release()
             if (err) {
                 return res.status(500).send('Internal Server Error');
@@ -533,11 +534,12 @@ app.post('/updateDay', function(req, res) {
 
 
         const savaites_diena = req.body.savaites_diena
+        const sav_dienos_nr = req.body.dienos_nr
         const id = req.body.id
 
         console.log(savaites_diena)
 
-        connection.query('UPDATE diena SET savaites_diena = ? WHERE id = ?', [savaites_diena, id], (err, rows) => {
+        connection.query('UPDATE diena SET savaites_diena = ?, sav_dienos_nr = ? WHERE id = ?', [savaites_diena, sav_dienos_nr, id], (err, rows) => {
             connection.release() // return the connection to pool
             if (err){
                 return res.status(500).send('Internal Server Error');

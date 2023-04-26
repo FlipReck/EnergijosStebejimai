@@ -42,7 +42,8 @@ export default function DayForm() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const roomId = data.get('dayId');
-    postDay(roomId, selectedTimes);
+    const dayNr = getDayNumber(roomId);
+    postDay(roomId, dayNr, selectedTimes);
   };
 
   const handleChange = (event) => {
@@ -51,9 +52,9 @@ export default function DayForm() {
     setSelectedTimes((typeof value === 'string' ? value.split(',') : value));
 };
 
-async function postDay(weekDay, times){
+async function postDay(weekDay, dayNr, times){
   try{
-      const response = await axios.post("http://127.0.0.1:5000/newday", {savaites_diena: weekDay});
+      const response = await axios.post("http://127.0.0.1:5000/newday", {savaites_diena: weekDay, sav_dienos_nr: dayNr});
       const dayId = response.data.id;
 
       times.forEach(el => {addDayTimes(dayId, el.id)});
@@ -86,6 +87,28 @@ const checkTime = (day) => {
     }
   });
   return flag;
+}
+
+const getDayNumber = (weekDay) =>
+{
+  switch (weekDay) {
+    case 'Pirmadienis':
+      return 2;
+    case 'Antradienis':
+      return 3;
+    case 'Trečiadienis':
+      return 4;
+    case 'Ketvirtadienis':
+      return 5;
+    case 'Penktadienis':
+      return 6;
+    case 'Šeštadienis':
+      return 7;
+    case 'Sekmadienis':
+      return 1;
+    default:
+      return -1;
+  }
 }
 
   return (

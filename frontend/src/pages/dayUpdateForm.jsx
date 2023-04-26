@@ -31,7 +31,8 @@ export default function DayUpdateForm() {
     const data = new FormData(event.currentTarget);
     const dayData = ({
       id: id,
-      savaites_diena: data.get('savaites_diena')
+      savaites_diena: data.get('savaites_diena'),
+      dienos_nr: getDayNumber(data.get('savaites_diena'))
     });
     console.log(dayData);
     axios.post(`http://127.0.0.1:5000/updateDay`, dayData).then(response => {
@@ -41,6 +42,28 @@ export default function DayUpdateForm() {
       }
     }).catch(error => alert(error.response.statusText));
   };
+
+  const getDayNumber = (weekDay) =>
+{
+  switch (weekDay) {
+    case 'Pirmadienis':
+      return 2;
+    case 'Antradienis':
+      return 3;
+    case 'Trečiadienis':
+      return 4;
+    case 'Ketvirtadienis':
+      return 5;
+    case 'Penktadienis':
+      return 6;
+    case 'Šeštadienis':
+      return 7;
+    case 'Sekmadienis':
+      return 1;
+    default:
+      return -1;
+  }
+}
 
   return (
     <div>
