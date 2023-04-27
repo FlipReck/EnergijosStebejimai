@@ -154,6 +154,12 @@ export default function Accommondation() {
                 </center>
 
                 <Box sx={{ flexGrow: 1, p: 3 }}>
+
+                    <Box sx={{mb: 1}} display="flex" justifyContent="flex-end" >
+                        <Button style={{ background: "#1DA1F2", color: "white" }} 
+                            onClick={() => navigate(`weeks`)}>Savaitės pasirinkimas</Button>
+                    </Box>
+
                     {data1 === null || data1.length === 0 ? (
                         <Typography sx={{ textAlign: "center" }}>Wow, so empty!</Typography>
                     ) : (
