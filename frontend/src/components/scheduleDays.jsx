@@ -22,9 +22,10 @@ export default function SchdeuleDays({times, weekName, navigate, dayId, weekId})
         setDaytimes();
     }, [times]);
     
-    async function postDay(weekName, weekId){
+    async function postDay(weekName, weekId, dayNr){
         try{
-            const response = await axios.post("http://127.0.0.1:5000/newday", {savaites_diena: weekName});
+            //const response = await axios.post("http://127.0.0.1:5000/newday", {savaites_diena: weekName});
+            const response = await axios.post("http://127.0.0.1:5000/newday", {savaites_diena: weekName, sav_dienos_nr: dayNr});
             if (response.status === 201)
             {
                 const dayId = response.data.id;
@@ -51,7 +52,8 @@ export default function SchdeuleDays({times, weekName, navigate, dayId, weekId})
     }
 
     async function navigateNewDay(dayId, weekName, weekId){
-        const result = await postDay(weekName, weekId);
+        const dayNr = getDayNumber(weekName);
+        const result = await postDay(weekName, weekId, dayNr);
         navigate(`/accommodation/${dayId}/weeks/${weekId}/days/${result}/times/new`)
     }
 
@@ -81,6 +83,28 @@ export default function SchdeuleDays({times, weekName, navigate, dayId, weekId})
         } catch (error) {
             console.error(error);
             window.alert('Klaida');
+        }
+    }
+
+    const getDayNumber = (weekDay) =>
+    {
+        switch (weekDay) {
+            case 'Pirmadienis':
+            return 2;
+            case 'Antradienis':
+            return 3;
+            case 'Trečiadienis':
+            return 4;
+            case 'Ketvirtadienis':
+            return 5;
+            case 'Penktadienis':
+            return 6;
+            case 'Šeštadienis':
+            return 7;
+            case 'Sekmadienis':
+            return 1;
+            default:
+            return -1;
         }
     }
 
