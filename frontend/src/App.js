@@ -17,6 +17,10 @@ import WeekForm from './pages/weekForm';
 import DayUpdateForm from './pages/dayUpdateForm'
 import WeekUpdateForm from './pages/weekUpdateForm';
 import DeviceForm from './pages/deviceForm'
+import ScheduleForm from './pages/scheduleForm'
+import TimeForm1 from './pages/timeForm1'
+import WeeksList from './pages/weeksList'
+
 
 function App() {
 
@@ -32,17 +36,33 @@ function App() {
         <Route path="accommodation">
           <Route index element={<AccommondationList />} />
           <Route path="new" element={<AccommondationForm />} />
-
           <Route path=":id">
             <Route index element={<Accommondation />} />
             <Route path="update" element={<AccommondationUpdateForm />} />
             <Route path="schedule" element={<AccommondationSchedule />} />
             <Route path="addDevice" element={<DeviceForm />} />
+            <Route path="weeks">
+              <Route index element={<WeeksList />} />
+              <Route path=":weekId">
+                <Route index element={<ScheduleForm />} />
+                <Route path="days">
+                  <Route index element={<p>Page Not Found</p>} />
+                  <Route path=":dayId">
+                    <Route index element={<p>Page Not Found</p>} />
+                    <Route path="times">
+                      <Route index element={<p>Page Not Found</p>} />
+                      <Route path="new" element={ <TimeForm1/> } />
+                    </Route>
+                  </Route>
+                </Route>
+              </Route>
+            </Route>
             <Route path="editDevice">
               <Route path=":deviceId" element={<DeviceForm />} />
             </Route>
           </Route>
         </Route>
+
         <Route path="week">
           <Route index element={<Home />} />
           <Route path="new" element={<WeekForm />} />
@@ -50,13 +70,13 @@ function App() {
           <Route path=":id">
             <Route index element={<Home />} />
             <Route path="update" element={<WeekUpdateForm />} />
-          </Route>
-        </Route>
+                </Route>
+              </Route>
         <Route exact path="/dayForm" element={<DayForm />} />
         <Route path="updateDay">
           <Route path=":id" element={<DayUpdateForm />} />
         </Route>
-        <Route exact path="/timeForm" element={<TimeForm />} />
+        <Route exact path="/timeForm" element={<TimeForm />} />        
         <Route path="*" element={<p>Page Not Found</p>}></Route>
       </Routes>
     </>

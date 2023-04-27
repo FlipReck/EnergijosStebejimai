@@ -16,6 +16,14 @@ export default class weekApi extends Api {
         return super.init().get(`weeks/${id}/days`);
     }
 
+    getWeekSchedule = (roomId, weekId) => {
+        return super.init().get(`/accommodations/${roomId}/weeks/${weekId}/schedule`);
+    }
+
+    getAccommodationWeeks = (accommodationId) => {
+        return super.init().get(`/accommodations/${accommodationId}/weeks`);
+    }
+
     postWeek = (data) => {
         return super.init().post(`weeks`, {
             weekNumber: data.weekId,

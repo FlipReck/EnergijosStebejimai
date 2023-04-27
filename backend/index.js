@@ -356,6 +356,22 @@ app.post('/accommodations/:id/devices', (req, res) => {
     })
 });
 
+//GET room all weeks
+app.get('/accommodations/:accommodationId/weeks', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT * FROM savaite WHERE id_patalpa = ?', [req.params.accommodationId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.send(rows);
+        });
+    })
+});
+
 //PATCH prietaisai entry
 app.patch('/accommodations/:id/devices/:device_id/update', (req, res) => {
     pool.getConnection((err, connection) => {
@@ -668,6 +684,22 @@ app.get('/times', (req, res) => {
     })
 });
 
+//GET selected day's times
+app.get('/days/:dayId/times', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT uzimtumo_laikas.id, TIME_FORMAT(uzimtumo_laikas.pradzia, "%H:%i") as pradzia, TIME_FORMAT(uzimtumo_laikas.pabaiga, "%H:%i") as pabaiga, asmenu_kiekis FROM uzimtumo_laikas INNER JOIN dienos_laikas ON uzimtumo_laikas.id = dienos_laikas.id_uzimtumo_laikas WHERE dienos_laikas.id_diena = ?', [req.params.dayId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.send(rows);
+        });
+    })
+});
+
 //GET all entries from uzimtumo_laikas
 app.get('/getAllTime', (req, res) => {
     pool.getConnection((err, connection) => {
@@ -721,7 +753,8 @@ app.post('/newTime', function(req, res) {
             connection.release() // return the connection to pool
             if (!err) {
                 console.log(`Time has been added.`)
-                res.redirect('back')
+                res.status(201).json({id: rows.insertId});
+                //res.redirect('back')
             } else {
                 console.log(err)
             }
@@ -871,6 +904,51 @@ app.put('/weeks/:weekId', (req, res) => {
     })
 });
 
+// ensure that room has only one active week
+app.put('/weeks/:weekId/checkActive', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        // const weekNumber = req.body.weekNumber;
+        const weekNumber = req.params.weekId;
+        const room = req.body.room;
+
+        connection.query('UPDATE savaite SET active = 0 WHERE id_patalpa = ? AND id != ?', [room, weekNumber], (error, results) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (results.changedRows === 0){
+              //return res.status(404).send('NotFound')
+          }
+            res.status(200).json({weekNumber: weekNumber, room: room})
+        })
+    })
+});
+
+//UPDATE set selected week active
+app.put('/weeks/:weekId/setActive', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        // const weekNumber = req.body.weekNumber;
+        const weekNumber = req.params.weekId;
+
+        connection.query('UPDATE savaite SET active = 1 WHERE id = ?', [weekNumber], (error, results) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (results.changedRows === 0){
+              //return res.status(404).send('NotFound')
+          }
+            res.status(200).json({weekNumber: weekNumber, isActive: 1})
+        })
+    })
+});
+
 //DELETE savaite entry
 app.delete('/weeks/:weekId', (req, res) => {
     pool.getConnection((err, connection) => {
@@ -889,6 +967,8 @@ app.delete('/weeks/:weekId', (req, res) => {
         });
     })
 });
+
+
 
 //GET week days
 app.get('/weeks/:weekId/days', (req, res) => {
@@ -947,6 +1027,62 @@ app.delete('/weeks/:weekId/deleteDay', (req, res) => {
                 return res.status(404).send('NotFound')
             }
             res.status(204).end();
+        });
+    })
+});
+
+//DELETE time
+app.delete('/times/:timeId', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+
+        connection.query('DELETE FROM uzimtumo_laikas WHERE id = ?', [req.params.timeId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (rows.affectedRows === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.status(204).end();
+        });
+    })
+});
+
+//DELETE savaites_diena
+app.delete('/dayTime/:timeId', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+
+        connection.query('DELETE FROM dienos_laikas WHERE id_uzimtumo_laikas = ?', [req.params.timeId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (rows.affectedRows === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.status(204).end();
+        });
+    })
+});
+
+//GET all times
+app.get('/accommodations/:accommodationId/weeks/:weekId/schedule', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT diena.savaites_diena, savaites_diena.id_diena, dienos_laikas.id_uzimtumo_laikas, TIME_FORMAT(uzimtumo_laikas.pradzia, "%H:%i") AS pradzia, TIME_FORMAT(uzimtumo_laikas.pabaiga, "%H:%i") AS pabaiga, uzimtumo_laikas.asmenu_kiekis FROM savaite LEFT JOIN savaites_diena ON savaite.id = savaites_diena.id_savaite LEFT JOIN diena ON savaites_diena.id_diena = diena.id LEFT JOIN dienos_laikas ON diena.id = dienos_laikas.id_diena LEFT JOIN uzimtumo_laikas ON dienos_laikas.id_uzimtumo_laikas = uzimtumo_laikas.id WHERE savaite.id = ? AND savaite.id_patalpa = ?', [req.params.weekId, req.params.accommodationId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.send(rows);
         });
     })
 });

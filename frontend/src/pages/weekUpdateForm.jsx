@@ -108,8 +108,21 @@ import { MenuProps } from "../helpers/menuProps";
                 room: roomId
             });
             if (response.status === 200){
-                selectedDays.forEach(day => {!currentSelectedDays.some(el => day.id === el.id) && deleteWeekDay(weekId, day.id)});
-                currentSelectedDays.forEach(day => {!selectedDays.some(el => day.id === el.id) && addWeekDay(weekId, day.id)});
+                if (isActive)
+                {
+                    const response1 = await axios.put(`http://127.0.0.1:5000/weeks/${weekId}/checkActive`, {
+                        weekId: weekId,
+                        room: roomId
+                    });
+                    if (response1.status === 200){
+                        selectedDays.forEach(day => {!currentSelectedDays.some(el => day.id === el.id) && deleteWeekDay(weekId, day.id)});
+                        currentSelectedDays.forEach(day => {!selectedDays.some(el => day.id === el.id) && addWeekDay(weekId, day.id)});
+                    }
+                }
+                else{
+                    selectedDays.forEach(day => {!currentSelectedDays.some(el => day.id === el.id) && deleteWeekDay(weekId, day.id)});
+                    currentSelectedDays.forEach(day => {!selectedDays.some(el => day.id === el.id) && addWeekDay(weekId, day.id)});
+                }
             }
             window.alert("Savaitė pakoreguota");
         } catch (error){
