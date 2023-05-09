@@ -1115,6 +1115,105 @@ app.post('/newPatalpa', function(req, res) {
     })
 });
 
+//GET all sensors
+app.get('/sensors', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT * FROM sensorius', [req.params.accommodationId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.send(rows);
+        });
+    })
+});
+
+//GET selected room sensors
+app.get('/accommodations/:accommodationId/sensors', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT * FROM sensorius WHERE id_patalpa = ?', [req.params.accommodationId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.send(rows);
+        });
+    })
+});
+
+//POST new sensor
+app.post('/accommodations/:accommodationId/sensors', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        const room = req.params.accommodationId;
+        const sensorId = req.body.sensorId;
+
+        connection.query('INSERT INTO sensorius (id, id_patalpa) VALUES(?, ?)', [sensorId, room], (error, results) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.status(201).json({id: results.insertId});
+        });
+    })
+});
+
+// Update accommodation selected sensor
+app.put('/accommodations/:accommodationId/sensors/:sensorId', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        const newSensorId = req.body.sensorId;
+        const roomId = req.params.accommodationId;
+        const sensorId = req.params.sensorId;
+
+        connection.query('UPDATE sensorius SET id = ? WHERE id_patalpa = ? AND id = ?', [newSensorId, roomId, sensorId], (error, results) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (results.changedRows === 0){
+              //return res.status(404).send('NotFound')
+          }
+            res.status(200).json({sensorId: sensorId, accommodationId: roomId})
+        })
+    })
+});
+
+//DELETE accommodation selected sensor
+app.delete('/accommodations/:accommodationId/sensors/:sensorId', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('DELETE FROM sensorius WHERE id = ? AND id_patalpa = ?', [req.params.sensorId, req.params.accommodationId], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            if (rows.affectedRows === 0){
+                return res.status(404).send('NotFound')
+            }
+            res.status(204).end();
+        });
+    })
+});
+
+
+
+
+
+
+
 // app.get('/test', (req, res) => {
 //     observationsControler.getAllObservations,
 //     res.send('json')

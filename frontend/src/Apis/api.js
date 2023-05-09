@@ -8,7 +8,7 @@ export default class Api {
   }
   init() {
     let headers = {
-      Accept: "application/json",
+      Accept: "application/json"
     };
 
     if (this.api_token) {
@@ -19,7 +19,7 @@ export default class Api {
       baseURL: this.api_url,
       timeout: 31000,
       headers: headers,
-      withCredentials: true,
+      'Access-Control-Allow-Credentials': true
     });
 
     return this.client;

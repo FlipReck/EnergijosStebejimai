@@ -145,6 +145,10 @@ export default function Accommondation() {
                                 Ištrinti patalpą
                             </Button>
                             </ListItem>
+                            <ListItem><Button style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`sensors`)}>
+                                Sensoriai
+                            </Button>
+                            </ListItem>
                             <ListItem><Button style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`schedule`)}>
                                 Patalpos tvarkaraštis
                             </Button>
