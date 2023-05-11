@@ -1087,7 +1087,7 @@ app.get('/accommodations/:accommodationId/weeks/:weekId/schedule', (req, res) =>
     })
 });
 
-//Insert one entry to uzimtumo_laikas
+//Insert one entry to patalpa
 app.post('/newPatalpa', function(req, res) {
     pool.getConnection((err, connection) => {
         if (err) throw err
@@ -1208,9 +1208,43 @@ app.delete('/accommodations/:accommodationId/sensors/:sensorId', (req, res) => {
     })
 });
 
+//GET all ispejimas of acommodation
+app.get('/getAllWarnings/:id', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err){
+            return res.status(500).send('Internal Server Error');
+        }
+        connection.query('SELECT * FROM ispejimas WHERE id_patalpa = ?', [req.params.id], (error, rows) => {
+            connection.release();
+            if (error){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.send(rows);
+        });
+    })
+});
 
+app.post('/warningSeen', function(req, res) {
 
+    pool.getConnection((err, connection) => {
+        if (err) throw err
 
+        const id = req.body.id
+        console.log('id: \n', id)
+
+        connection.query('UPDATE ispejimas SET seen = 1 WHERE id = ?', [id], (err, rows) => {
+            connection.release() // return the connection to pool
+            if (err){
+                return res.status(500).send('Internal Server Error');
+            }
+            res.status(201).json({id: id})
+
+            console.log('data: \n', rows)
+
+        })
+
+    })
+});
 
 
 

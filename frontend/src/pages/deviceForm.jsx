@@ -27,9 +27,12 @@ import accommodationApi from '../Apis/accommodationApi';
             const getData = async () => {
                 try {
                     const repApi = new accommodationApi();
-                    const response = await repApi.getDevice(id);
+                    const response = await repApi.getDevice(deviceId);
                     setName(response.data[0].name);
                     setIpAddress(response.data[0].ip_address);
+                    // console.log(id)
+                    // console.log(deviceId)
+                    // console.log(response.data)
                 } catch (err) {
                     console.log(err.response.data.message)
                 }

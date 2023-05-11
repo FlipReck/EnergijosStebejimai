@@ -10,6 +10,9 @@ export default class accommodationApi extends Api {
   getAllDevices = (id) => {
     return super.init().get(`getAllDevices/${id}`);
   };
+  getAllWarnings = (id) => {
+    return super.init().get(`getAllWarnings/${id}`);
+  };
   getDevice = (id) => {
     return super.init().get(`getDevice/${id}`);
   };

@@ -29,7 +29,7 @@ function App() {
   return (
     <>
       <Routes>
-        <Route exact path="/" element={<Home />} />
+        <Route exact path="/" element={<AccommondationList />} />
         <Route exact path="/data" element={<Data />} />
         <Route exact path="/days" element={<Days />} />
         <Route exact path="/weeks" element={<Weeks />} />

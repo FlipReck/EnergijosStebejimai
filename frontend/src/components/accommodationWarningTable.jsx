@@ -1,0 +1,89 @@
+import React from 'react';
+import { Button, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+} from "@mui/material";
+import axios from "axios";
+
+export default function WarningTable({ data }) {
+    function seenButtonHandle(id) {
+        if (window.confirm("Ar norite pažymėti įspėjimą kaip matyta?")) {
+            warningSeen(id);
+        }
+        
+    }
+
+    async function warningSeen(warningId) {
+        const warningData = ({
+            id: warningId,
+        });
+        axios.post(`http://127.0.0.1:5000/warningSeen`, warningData).then(response => {
+            // console.log(response);
+            if (response.status == 201) {
+                window.alert("Įspėjimas pažymėtas, kaip matytas");
+                window.location.reload();
+            }
+        }).catch(error => alert(error.response.statusText));
+
+    }
+
+    function checking(seen) {
+        if (seen === 0) {
+            return "Ne";
+        }
+        else return "Taip"
+    }
+
+    return (
+        <Box sx={{ flexGrow: 1, p: 3 }}>
+            <Typography sx={{ textAlign: "center" }}>Įspėjimai</Typography>
+            {data === null || data.length === 0 ? (
+                <Typography sx={{ textAlign: "center" }}>Nėra įspėjimų</Typography>
+            ) : (
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>
+                                Įspėjimo laikas
+                            </TableCell>
+                            <TableCell>
+                                Energijos kiekis
+                            </TableCell>
+                            <TableCell>
+                                Pažymėtas kaip matytas
+                            </TableCell>
+                            <TableCell>
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {data.map((row) => (
+                            <TableRow key={row.id}>
+                                <TableCell component="th" scope="row">
+                                    {row.data}
+                                </TableCell>
+                                <TableCell>
+                                    {row.galios_virsyjimas}
+                                </TableCell>
+                                <TableCell>
+                                    {checking(row.seen)}
+                                </TableCell>
+                                <TableCell>
+                                    <Button style={{ background: "crimson", color: "white" }}
+                                        onClick={() => seenButtonHandle(row.id)}>
+                                        Pažymėti kaip matyta
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            )}
+        </Box>
+    )
+}

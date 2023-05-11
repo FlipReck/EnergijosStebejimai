@@ -80,10 +80,10 @@ export default function GraphPage() {
       <Header />
       <Container>
         <Typography className="page-title" sx={{ borderBottom: "1px solid gray", pb: 1, my: 4, pl: 2 }}>
-          Data graph
+          Duomenų diagrama
         </Typography>
         {/* <TextField sx={{ py: 5 }} id="test" name="test" label="test:" variant="outlined" type="date" /><br /> */}
-        <Typography sx={{ textAlign: "center", my: 4 }}>Average peak power usage on a chosen date</Typography>
+        <Typography sx={{ textAlign: "center", my: 4 }}>Vidutinė momentinė galia pasirinktu laiko intervalu</Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>

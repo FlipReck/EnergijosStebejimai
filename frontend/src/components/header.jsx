@@ -55,7 +55,7 @@ export default function Header() {
     }
 
     return (
-        <AppBar style={{background: "#11111199", padding: 20 }} position="static">
+        <AppBar style={{ background: "#11111199", padding: 20 }} position="static">
             <Container>
                 <Toolbar variant="dense">
                     <IconButton onClick={handleMenuClick} edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
@@ -65,7 +65,7 @@ export default function Header() {
                         <Button style={{ color: 'white', px: 5 }} href="/">
                             <Typography sx={{ pr: 3 }} >Energijos stebejimas</Typography>
                         </Button>
-                        <React.Fragment>
+                        {/* <React.Fragment>
                             <Button onClick={handleMenuClick} style={{ color: 'white', width: 60, padding: 10, pl: 5 }}>
                                 Formos
                             </Button>
@@ -84,14 +84,14 @@ export default function Header() {
                                     </MenuItem>
                                 ))}
                             </Menu>
-                        </React.Fragment>
-                        <Button href="/data" startIcon={<TableChartIcon />} style={{ color: 'white', padding: 10, pl: 5 }}>Sensoriaus Duomenys</Button>
+                        </React.Fragment> */}
+                        {/* <Button href="/data" startIcon={<TableChartIcon />} style={{ color: 'white', padding: 10, pl: 5 }}>Sensoriaus Duomenys</Button> */}
                         <Button href="/graph" startIcon={<EqualizerIcon />} style={{ color: 'white', padding: 10, pl: 5 }}>Diagramos</Button>
                         <Button href="/accommodation" style={{ color: 'white', padding: 10, pl: 5 }}>Patalpos</Button>
-            <Button href="/days" style={{color:'white', pl:5}}>Dienos</Button>
-            <Button href="/weeks" style={{color:'white', pl:5}}>Savaitės</Button>
+                        {/* <Button href="/days" style={{ color: 'white', pl: 5 }}>Dienos</Button>
+                        <Button href="/weeks" style={{ color: 'white', pl: 5 }}>Savaitės</Button> */}
                     </Box>
-                    </Toolbar>
+                </Toolbar>
             </Container>
         </AppBar>
     );

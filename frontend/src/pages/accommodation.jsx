@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { Container } from "@mui/system";
 import DevicesTable from "../components/accommodationDevicesTable";
+import WarningTable from "../components/accommodationWarningTable";
 import axios from "axios";
 
 export default function Accommondation() {
@@ -38,7 +39,7 @@ export default function Accommondation() {
                 const repApi = new accommodationApi();
                 const response = await repApi.getAccommendation(id);
                 const response1 = await repApi.getAllDevices(id);
-                const response2 = await repApi.getAllWeeks(id);
+                const response2 = await repApi.getAllWarnings(id);
                 const response3 = await repApi.getAllTime();
                 const response4 = await repApi.getAccommodationTimes(id);
                 setData(response.data);
@@ -67,29 +68,27 @@ export default function Accommondation() {
                 console.log(err.response.data.message)
                 setEntries(null);
             }
-          };
+        };
 
         getData();
         getEntries();
     }, []);
 
-    function checking(uz_laikas, diena, extension)
-    {
+    function checking(uz_laikas, diena, extension) {
         var hold = occupiedTimes.filter(x => x.id_uzimtumo_laikas === uz_laikas && x.savaites_diena === diena)
-        if(hold !== undefined && hold !== null && hold.length !== 0)
-        {
+        if (hold !== undefined && hold !== null && hold.length !== 0) {
             // var tag = (uz_laikas-1).toString()+ extension
             // console.log(tag)
             // document.getElementById(tag).style.backroundColor = "#1DA1F2";
             return "busy";
         }
     }
-    
+
     function emptyDays() {
         let days = [];
-        if(occupiedTimes){
+        if (occupiedTimes) {
             occupiedTimes.forEach(time => {
-                if(days[time.savaites_diena] != null){
+                if (days[time.savaites_diena] != null) {
                     days[time.savaites_diena]++;
                 } else {
                     days[time.savaites_diena] = 0;
@@ -99,16 +98,16 @@ export default function Accommondation() {
         return days;
     }
 
-    function deleteButtonHandle(id){
-        if (window.confirm("Ar tikrai norite ištrinti patalpą?")){
+    function deleteButtonHandle(id) {
+        if (window.confirm("Ar tikrai norite ištrinti patalpą?")) {
             deleteAccommodation(id);
         }
     }
 
-    async function deleteAccommodation(accommodationId){
+    async function deleteAccommodation(accommodationId) {
         try {
             const response = await axios.delete(`http://127.0.0.1:5000/accommodations/${accommodationId}`);
-            if (response.status === 204){
+            if (response.status === 204) {
                 window.alert("Patalpa pašalinta");
                 navigate(`/accommodation`);
             }
@@ -138,12 +137,12 @@ export default function Accommondation() {
                             <ListItem>Atsakingo asmens kontaktas</ListItem>
                             <ListItem>Kompiuterių kiekis</ListItem>
                             <ListItem>Energijos riba per žmogų</ListItem>
-                            <ListItem><Button sx={{mr: 1}} style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`update`)}>
+                            <ListItem><Button sx={{ mr: 1 }} style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`update`)}>
                                 Redaguoti
                             </Button>
-                            <Button style={{ background: "crimson", color: "white" }} onClick={() => deleteButtonHandle(data[0].id)}>
-                                Ištrinti patalpą
-                            </Button>
+                                <Button style={{ background: "crimson", color: "white" }} onClick={() => deleteButtonHandle(data[0].id)}>
+                                    Ištrinti patalpą
+                                </Button>
                             </ListItem>
                             <ListItem><Button style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`sensors`)}>
                                 Sensoriai
@@ -162,10 +161,12 @@ export default function Accommondation() {
                             <ListItem>{data[0].energijos_riba_per_zmogu}</ListItem>
                         </List>
                     </Box>)}
-                    <Typography sx={{ textAlign: "center" }}>Šiandienos momentinių enegijos sąnaudų diagrama</Typography>
-                    <Graph ref={chartRef} data={entries} scale={"Valanda"} />
+                <Typography sx={{ textAlign: "center" }}>Šiandienos momentinių enegijos sąnaudų diagrama</Typography>
+                <Graph ref={chartRef} data={entries} scale={"Valanda"} />
 
-                <DevicesTable data1={data1} navigate={navigate} setData1={setData1}/>
+                <DevicesTable data1={data1} navigate={navigate} setData1={setData1} />
+
+                <WarningTable data={data2}/>
 
                 <center>
                     <Button style={{ background: "#1DA1F2", color: "white" }}>
@@ -175,8 +176,8 @@ export default function Accommondation() {
 
                 <Box sx={{ flexGrow: 1, p: 3 }}>
 
-                    <Box sx={{mb: 1}} display="flex" justifyContent="flex-end" >
-                        <Button style={{ background: "#1DA1F2", color: "white" }} 
+                    <Box sx={{ mb: 1 }} display="flex" justifyContent="flex-end" >
+                        <Button style={{ background: "#1DA1F2", color: "white" }}
                             onClick={() => navigate(`weeks`)}>Savaitės pasirinkimas</Button>
                     </Box>
 
@@ -187,27 +188,27 @@ export default function Accommondation() {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>
-                                        
+
                                     </TableCell>
-                                    <TableCell sx={occupiedDays['Pirmadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } }>
+                                    <TableCell sx={occupiedDays['Pirmadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }}>
                                         Pirmadienis
                                     </TableCell>
-                                    <TableCell sx={occupiedDays['Antradienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } }>
+                                    <TableCell sx={occupiedDays['Antradienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }}>
                                         Antradienis
                                     </TableCell>
-                                    <TableCell sx={occupiedDays['Trečiadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } }>
+                                    <TableCell sx={occupiedDays['Trečiadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }}>
                                         Trečiadienis
                                     </TableCell>
-                                    <TableCell sx={occupiedDays['Ketvirtadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } }>
+                                    <TableCell sx={occupiedDays['Ketvirtadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }}>
                                         Ketvirtadienis
                                     </TableCell>
-                                    <TableCell sx={occupiedDays['Penktadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } }>
+                                    <TableCell sx={occupiedDays['Penktadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }}>
                                         Penktadienis
                                     </TableCell>
-                                    <TableCell sx={occupiedDays['Šeštadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } }>
+                                    <TableCell sx={occupiedDays['Šeštadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }}>
                                         Šeštadienis
                                     </TableCell>
-                                    <TableCell sx={occupiedDays['Sekmadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } }>
+                                    <TableCell sx={occupiedDays['Sekmadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }}>
                                         Sekmadienis
                                     </TableCell>
                                 </TableRow>
@@ -219,26 +220,26 @@ export default function Accommondation() {
                                             <TableCell component="th" scope="row">
                                                 {row.pradzia} - {row.pabaiga}
                                             </TableCell>
-                                            <TableCell sx={occupiedDays['Pirmadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } } id={index+"t1"}>
-                                                {(checking(index+1, 'Pirmadienis', "t1"))}
+                                            <TableCell sx={occupiedDays['Pirmadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }} id={index + "t1"}>
+                                                {(checking(index + 1, 'Pirmadienis', "t1"))}
                                             </TableCell>
-                                            <TableCell sx={occupiedDays['Antradienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } } id={index+"t2"}>
-                                                {checking(index+1, 'Antradienis', "t2")}
+                                            <TableCell sx={occupiedDays['Antradienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }} id={index + "t2"}>
+                                                {checking(index + 1, 'Antradienis', "t2")}
                                             </TableCell>
-                                            <TableCell sx={occupiedDays['Trečiadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } } id={index+"t3"}>
-                                                {checking(index+1, 'Trečiadienis', "t3")}
+                                            <TableCell sx={occupiedDays['Trečiadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }} id={index + "t3"}>
+                                                {checking(index + 1, 'Trečiadienis', "t3")}
                                             </TableCell>
-                                            <TableCell sx={occupiedDays['Ketvirtadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } } id={index+"t4"}>
-                                                {checking(index+1, 'Ketvirtadienis', "t4")}
+                                            <TableCell sx={occupiedDays['Ketvirtadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }} id={index + "t4"}>
+                                                {checking(index + 1, 'Ketvirtadienis', "t4")}
                                             </TableCell>
-                                            <TableCell sx={occupiedDays['Penktadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } } id={index+"t5"}>
-                                                {checking(index+1, 'Penktadienis', "t5")}
+                                            <TableCell sx={occupiedDays['Penktadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }} id={index + "t5"}>
+                                                {checking(index + 1, 'Penktadienis', "t5")}
                                             </TableCell>
-                                            <TableCell sx={occupiedDays['Šeštadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } } id={index+"t6"}>
-                                                {checking(index+1, 'Šeštadienis', "t6")}
+                                            <TableCell sx={occupiedDays['Šeštadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }} id={index + "t6"}>
+                                                {checking(index + 1, 'Šeštadienis', "t6")}
                                             </TableCell>
-                                            <TableCell sx={occupiedDays['Sekmadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" } } id={index+"t7"}>
-                                                {checking(index+1, 'Sekmadienis', "t7")}
+                                            <TableCell sx={occupiedDays['Sekmadienis'] > 0 ? undefined : { background: "rgba(0, 0, 0, 0.08)", border: "none" }} id={index + "t7"}>
+                                                {checking(index + 1, 'Sekmadienis', "t7")}
                                             </TableCell>
                                         </TableRow>
                                     )
