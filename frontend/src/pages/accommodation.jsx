@@ -168,12 +168,6 @@ export default function Accommondation() {
 
                 <WarningTable data={data2}/>
 
-                <center>
-                    <Button style={{ background: "#1DA1F2", color: "white" }}>
-                        Ištrinti įspėjimą
-                    </Button>
-                </center>
-
                 <Box sx={{ flexGrow: 1, p: 3 }}>
 
                     <Box sx={{ mb: 1 }} display="flex" justifyContent="flex-end" >

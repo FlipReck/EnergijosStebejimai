@@ -3,6 +3,7 @@ const AppError = require('./utils/appError');
 const express = require('express')
 const app = express()
 const mysql = require("mysql");
+const nodemailer = require('nodemailer');
 
 const pool = mysql.createPool({
     // connectionLimit : 10,
@@ -36,6 +37,46 @@ app.use(function (req, res, next) {
     next();
 });
 
+function sendEmail() {
+    // Create a Nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      // Provide your email configuration details here
+      service: 'yahoo',
+      auth: {
+        user: 'nodeexpress@yahoo.com',
+        pass: 'linuotezalia',
+      },
+    });
+  
+    // Define the email options
+    const mailOptions = {
+      from: 'nodeexpress@yahoo.com',
+      to: 'nodeexpress@yahoo.com',
+      subject: 'Warnings during the last hour',
+      text: 'This is a test email sent from an Express server.',
+    };
+  
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log('Error sending email:', error);
+      } else {
+        console.log('Email sent:', info.response);
+      }
+    });
+  }
+
+// app.use((req, res, next) => {
+//     // Execute the method immediately
+//     sendEmail();
+  
+//     // Schedule the method to be executed every hour
+//     setInterval(sendEmail, 60 * 60 * 1000);
+  
+//     // Call the next middleware
+//     next();
+//   });
+
 //
 //Irasai backend
 //
@@ -56,6 +97,26 @@ app.get('/getAll', (req, res) => {
         })
     })
 });
+
+// app.put('/updateWarning', function(req, res) {
+
+//     pool.getConnection((err, connection) => {
+//         if (err) throw err
+
+
+//         const id = req.query.id
+
+//         connection.query('UPDATE ispejimas SET seen=seen+1 WHERE id = ?', [id], (err, rows) => {
+//             connection.release() // return the connection to pool
+//             if (!err) {
+//                 console.log(`ispejimas has been seen.`)
+//             } else {
+//                 console.log(err)
+//             }
+
+//         })
+//     })
+// });
 
 app.get('/getAccommodationTimes', (req, res) => {
     pool.getConnection((err, connection) => {
@@ -1214,7 +1275,7 @@ app.get('/getAllWarnings/:id', (req, res) => {
         if (err){
             return res.status(500).send('Internal Server Error');
         }
-        connection.query('SELECT * FROM ispejimas WHERE id_patalpa = ?', [req.params.id], (error, rows) => {
+        connection.query('SELECT * FROM ispejimas WHERE id_patalpa = ? AND seen=0', [req.params.id], (error, rows) => {
             connection.release();
             if (error){
                 return res.status(500).send('Internal Server Error');
