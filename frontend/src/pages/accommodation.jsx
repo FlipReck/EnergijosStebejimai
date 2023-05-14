@@ -2,7 +2,7 @@ import Header from "../components/header";
 import React, { useRef } from 'react';
 import { useEffect, useState } from "react";
 import { Button, Typography } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import accommodationApi from "../Apis/accommodationApi";
 import graphApi from "../Apis/graphApi";
 import Graph from "../components/graph";
@@ -80,7 +80,14 @@ export default function Accommondation() {
             // var tag = (uz_laikas-1).toString()+ extension
             // console.log(tag)
             // document.getElementById(tag).style.backroundColor = "#1DA1F2";
-            return "busy";
+            return (
+                <>
+                    Busy 
+                    <Link sx={{ ml: 2, pl: 5 }} to={`/times/${uz_laikas}`}>
+                        »
+                    </Link>   
+                </>
+            );
         }
     }
 

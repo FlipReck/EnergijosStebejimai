@@ -22,6 +22,7 @@ import TimeForm1 from './pages/timeForm1'
 import WeeksList from './pages/weeksList'
 import SensorsList from './pages/sensorsList'
 import SensorForm1 from './pages/sensorForm'
+import TimeView from './pages/timeView'
 
 
 function App() {
@@ -67,6 +68,11 @@ function App() {
               <Route path=":deviceId" element={<DeviceForm />} />
             </Route>
           </Route>
+        </Route>
+
+        <Route path="times">
+          <Route index element={<p>Page Not Found</p>} />
+            <Route path=":id" element={<TimeView />} />
         </Route>
 
         <Route path="week">
