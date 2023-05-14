@@ -7,5 +7,9 @@ export default class timeApi extends Api {
 
   getDayTimes = (id) => {
     return super.init().get(`/days/${id}/times`);
-}
+  }
+
+  getTime = (id) => {
+    return super.init().get(`/getTime/${id}`);
+  }
 }
