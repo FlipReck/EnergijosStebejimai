@@ -41,21 +41,31 @@ function sendEmail() {
     // Create a Nodemailer transporter
     const transporter = nodemailer.createTransport({
       // Provide your email configuration details here
-      service: 'yahoo',
+      host: 'smtp.office365.com',
+      port:587,
+      secure: false, // Enable SSL/TLS
       auth: {
-        user: 'nodeexpress@yahoo.com',
-        pass: 'linuotezalia',
+        user: 'expressnode6@outlook.com',
+        pass: 'Linuotezalia1@',
       },
+    //   tls: {
+    //     ciphers: 'SSLv3',
+    //   },
     });
-  
+    //Linuotezalia1@ eml psw
     // Define the email options
     const mailOptions = {
-      from: 'nodeexpress@yahoo.com',
-      to: 'nodeexpress@yahoo.com',
-      subject: 'Warnings during the last hour',
-      text: 'This is a test email sent from an Express server.',
+      from: 'expressnode6@outlook.com',
+      to: 'expressnode6@outlook.com',
+      subject: 'Warnings during the last hour132124',
+      text: 'This is a test email sent from an Express server.434534',
     };
-  
+    
+    transporter.verify((err, success) => {
+        if (err) console.error(err);
+        console.log('Your config is correct');
+    });
+    
     // Send the email
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -66,16 +76,16 @@ function sendEmail() {
     });
   }
 
-// app.use((req, res, next) => {
-//     // Execute the method immediately
-//     sendEmail();
+app.use((req, res, next) => {
+    // Execute the method immediately
+    sendEmail();
   
-//     // Schedule the method to be executed every hour
-//     setInterval(sendEmail, 60 * 60 * 1000);
+    // Schedule the method to be executed every hour
+    setInterval(sendEmail, 60 * 60 * 1000);
   
-//     // Call the next middleware
-//     next();
-//   });
+    // Call the next middleware
+    next();
+  });
 
 //
 //Irasai backend
