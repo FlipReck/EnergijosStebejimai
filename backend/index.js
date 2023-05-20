@@ -102,9 +102,13 @@ const timeZone = 'Europe/Bucharest';
             const count = results[0].amount;
             message += `Count: ${count}`;
             
-            console.log(message);
             // Send the email with the customized message
-            sendEmail(message);
+            if( count > 0){
+                sendEmail(message);
+            }
+            else{
+                console.log(message);
+            }
             connection.release() // return the connection to pool
         })
     })
