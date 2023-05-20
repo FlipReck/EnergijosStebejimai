@@ -4,6 +4,7 @@ const express = require('express')
 const app = express()
 const mysql = require("mysql");
 const nodemailer = require('nodemailer');
+const moment = require('moment-timezone');
 
 const pool = mysql.createPool({
     // connectionLimit : 10,
@@ -37,28 +38,26 @@ app.use(function (req, res, next) {
     next();
 });
 
-function sendEmail() {
-    // Create a Nodemailer transporter
-    const transporter = nodemailer.createTransport({
-      // Provide your email configuration details here
-      host: 'smtp.office365.com',
-      port:587,
-      secure: false, // Enable SSL/TLS
-      auth: {
-        user: 'expressnode6@outlook.com',
-        pass: 'Linuotezalia1@',
-      },
-    //   tls: {
-    //     ciphers: 'SSLv3',
-    //   },
-    });
-    //Linuotezalia1@ eml psw
+// Create a Nodemailer transporter
+//Linuotezalia1@ eml psw
+const transporter = nodemailer.createTransport({
+    // Provide your email configuration details here
+    host: 'smtp.office365.com',
+    port:587,
+    secure: false, // Enable SSL/TLS
+    auth: {
+    user: 'expressnode6@outlook.com',
+    pass: 'Linuotezalia1@',
+    },
+});
+
+function sendEmail(result) {
     // Define the email options
     const mailOptions = {
       from: 'expressnode6@outlook.com',
       to: 'expressnode6@outlook.com',
-      subject: 'Warnings during the last hour132124',
-      text: 'This is a test email sent from an Express server.434534',
+      subject: 'Warnings during the last hour',
+      text: result,
     };
     
     transporter.verify((err, success) => {
@@ -76,16 +75,44 @@ function sendEmail() {
     });
   }
 
-app.use((req, res, next) => {
-    // Execute the method immediately
-    sendEmail();
-  
-    // Schedule the method to be executed every hour
-    setInterval(sendEmail, 60 * 60 * 1000);
-  
-    // Call the next middleware
-    next();
-  });
+// Set the time zone to EET
+const timeZone = 'Europe/Bucharest';
+
+  function executeQueryAndSendEmail() {
+    // Get the current time in EET
+    let currentTime = moment().tz(timeZone);
+
+    // Get the time one hour before the current time in EET
+    let oneHourAgo = moment().tz(timeZone).subtract(1, 'hour');
+
+    let formattedCurrentTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
+    let formattedOneHourAgo = oneHourAgo.format('YYYY-MM-DD HH:mm:ss');
+    
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+        let query = `SELECT count(*) as amount FROM ispejimas WHERE data >= DATE_FORMAT('${formattedOneHourAgo}', '%Y-%m-%d %H:%i:%s') AND data <= DATE_FORMAT('${formattedCurrentTime}', '%Y-%m-%d %H:%i:%s')`;
+        connection.query(query, (error, results) => {
+            if (error) {
+                console.log('Error executing query:', error);
+                connection.release();
+                return;
+              }
+
+            let message = `Amount of warnings during the last hour:\n\n`;
+            const count = results[0].amount;
+            message += `Count: ${count}`;
+            
+            console.log(message);
+            // Send the email with the customized message
+            sendEmail(message);
+            connection.release() // return the connection to pool
+        })
+    })
+  }
+
+executeQueryAndSendEmail();
+setInterval(executeQueryAndSendEmail, 60 * 60 * 1000);
+
 
 //
 //Irasai backend
