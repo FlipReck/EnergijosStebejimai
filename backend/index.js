@@ -404,9 +404,11 @@ app.post('/updateAccommendation', (req, res) => {
         const atsakingo_asmens_kontaktas = req.body.atsakingo_asmens_kontaktas;
         const kompiuteriu_kiekis = req.body.kompiuteriu_kiekis;
         const energijos_riba_per_zmogu = req.body.energijos_riba_per_zmogu;
+        const min_energija_ispejimui = req.body.min_energija_ispejimui;
+        const asmeniniai_prietaisai = req.body.asmeniniai_prietaisai;
 
-        connection.query('UPDATE `patalpa` SET`pavadinimas`= ? ,`atsakingo_asmens_vardas`= ? ,`atsakingo_asmens_pavarde`= ? ,`atsakingo_asmens_kontaktas`= ? ,`kompiuteriu_kiekis`= ? ,`energijos_riba_per_zmogu`= ? WHERE id = ?',
-        [pavadinimas, atsakingo_asmens_vardas, atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu, id], (err, rows) => {
+        connection.query('UPDATE `patalpa` SET`pavadinimas`= ? ,`atsakingo_asmens_vardas`= ? ,`atsakingo_asmens_pavarde`= ? ,`atsakingo_asmens_kontaktas`= ? ,`kompiuteriu_kiekis`= ? ,`energijos_riba_per_zmogu`= ? ,`min_energija_ispejimui`= ? ,`asmeniniai_prietaisai`= ? WHERE id = ?',
+        [pavadinimas, atsakingo_asmens_vardas, atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu, min_energija_ispejimui, asmeniniai_prietaisai, id], (err, rows) => {
             connection.release() // return the connection to pool
             if (err){
                 return res.status(500).send('Internal Server Error');
@@ -1201,9 +1203,12 @@ app.post('/newPatalpa', function(req, res) {
         const atsakingo_asmens_kontaktas = req.query.atsakingo_asmens_kontaktas
         const kompiuteriu_kiekis = req.query.kompiuteriu_kiekis
         const energijos_riba_per_zmogu = req.query.energijos_riba_per_zmogu
+        const min_energija_ispejimui = req.query.min_energija_ispejimui
+        const asmeniniai_prietaisai = req.query.asmeniniai_prietaisai
 
-        connection.query('INSERT INTO patalpa(pavadinimas, atsakingo_asmens_vardas,atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu) VALUES(?,?,?,?,?,?)',
-         [pavadinimas, atsakingo_asmens_vardas, atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu], (err, rows) => {
+
+        connection.query('INSERT INTO patalpa(pavadinimas, atsakingo_asmens_vardas,atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu, min_energija_ispejimui, asmeniniai_prietaisai) VALUES(?,?,?,?,?,?,?,?)',
+         [pavadinimas, atsakingo_asmens_vardas, atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu, min_energija_ispejimui, asmeniniai_prietaisai], (err, rows) => {
             connection.release() // return the connection to pool
             if (!err) {
                 console.log(`Patalpa has been added.`)

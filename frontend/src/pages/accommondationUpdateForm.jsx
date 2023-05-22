@@ -1,6 +1,7 @@
 import Header from "../components/header";
+import * as React from 'react';
 import { useEffect, useState } from "react";
-import { Button, Container, Typography } from "@mui/material";
+import { Button, Container, Typography, Checkbox, FormControlLabel } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { Box } from "@mui/system";
 import { useParams } from "react-router-dom";
@@ -14,6 +15,11 @@ export default function AccommondationUpdateForm() {
     const { id } = useParams();
     const [data, setData] = useState(null);
     const navigate = useNavigate();
+    const [checked, setChecked] = React.useState(true);
+      
+    const handleChange = (event) => {
+          setChecked(event.target.checked);
+        };
 
     useEffect(() => {
         const getData = async () => {
@@ -21,10 +27,13 @@ export default function AccommondationUpdateForm() {
                 const repApi = new accommodationApi();
                 const response = await repApi.getAccommendation(id);
                 setData(response.data);
+                console.log(response.data[0].asmeniniai_prietaisai)
+                setChecked(checking(response.data[0].asmeniniai_prietaisai));
             } catch (err) {
                 console.log(err.response.data.message)
                 setData(null);
             }
+            
         };
         getData();
     }, []);
@@ -39,9 +48,11 @@ export default function AccommondationUpdateForm() {
             atsakingo_asmens_pavarde: data.get('atsakingo_asmens_pavarde'),
             atsakingo_asmens_kontaktas: data.get('atsakingo_asmens_kontaktas'),
             kompiuteriu_kiekis: data.get('kompiuteriu_kiekis'),
-            energijos_riba_per_zmogu: data.get('energijos_riba_per_zmogu')
+            energijos_riba_per_zmogu: data.get('energijos_riba_per_zmogu'),
+            min_energija_ispejimui: data.get('min_energija_ispejimui'),
+            asmeniniai_prietaisai: checkingSubmit(data.get('asmeniniai_prietaisai'))
         });
-        //console.log(accommondationData);
+        console.log(accommondationData);
         axios.post(`http://127.0.0.1:5000/updateAccommendation`, accommondationData).then(response => {
             // console.log(response);
             if (response.status == 201) {
@@ -50,6 +61,20 @@ export default function AccommondationUpdateForm() {
             }
         }).catch(error => alert(error.response.statusText));
     };
+
+    function checking(asmeniniai_prietaisai) {
+        if (asmeniniai_prietaisai === 0) {
+            return false;
+        }
+        else return true
+    }
+
+    function checkingSubmit(asmeniniai_prietaisai) {
+        if (asmeniniai_prietaisai === null) {
+            return 0;
+        }
+        else return 1
+    }
 
     return (
         <div>
@@ -77,6 +102,11 @@ export default function AccommondationUpdateForm() {
                             <TextField sx={{ my: 5 }} id="kompiuteriu_kiekis" name="kompiuteriu_kiekis" label="Kompiuterių kiekis" variant="outlined" type="number" defaultValue={data[0].kompiuteriu_kiekis} /><br />
 
                             <TextField sx={{ my: 5 }} id="energijos_riba_per_zmogu" name="energijos_riba_per_zmogu" label="Energijos riba per žmogų" variant="outlined" type="number" defaultValue={data[0].energijos_riba_per_zmogu} /><br />
+                        </Box>
+                        <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, gap: 3 }}>
+                            <TextField sx={{ my: 5 }} InputLabelProps={{ shrink: true }} id="min_energija_ispejimui" name="min_energija_ispejimui" label="Min. energija nuo kurios siųsti įpėjimą" variant="outlined" type="number" defaultValue={data[0].min_energija_ispejimui} /><br />
+
+                            <FormControlLabel control={<Checkbox sx={{ my: 5 }} id="asmeniniai_prietaisai" name="asmeniniai_prietaisai" checked={checked} onChange={handleChange}/>} label="Ar bus asmeninių kompiuterių?"  /><br />
                         </Box>
 
                         <Button style={{ background: "#1DA1F2", color: "white" }} type="submit">Pateikti</Button>

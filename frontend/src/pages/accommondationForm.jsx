@@ -1,7 +1,8 @@
 import DataTable from "../components/dataTable";
+import * as React from 'react';
 import Header from "../components/header";
 import { useEffect, useState } from "react";
-import { Button, Container, Typography } from "@mui/material";
+import { Button, Container, Typography, FormControlLabel, Checkbox } from "@mui/material";
 import reportApi from "../Apis/reportApi";
 import TextField from "@mui/material/TextField";
 import { Box } from "@mui/system";
@@ -15,8 +16,14 @@ export default function AccommondationForm() {
     const [atsakingo_asmens_kontaktas, setAtsakingo_asmens_kontaktas] = useState(null);
     const [kompiuteriu_kiekis, setKompiuteriu_kiekis] = useState(null);
     const [energijos_riba_per_zmogu, setEnergijos_riba_per_zmogu] = useState(null);
+    const [min_energija_ispejimui, setMin_energija_ispejimui] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const [checked, setChecked] = React.useState(false);
+      
+    const handleChange = (event) => {
+          setChecked(event.target.checked);
+        };
 
     const handleClick = async () => {
         try {
@@ -44,10 +51,14 @@ export default function AccommondationForm() {
             setEnergijos_riba_per_zmogu(undefined);
             setEnergijos_riba_per_zmogu(undefined);
           }
+          if(min_energija_ispejimui === null || min_energija_ispejimui === ""){
+            setMin_energija_ispejimui(undefined);
+            setMin_energija_ispejimui(undefined);
+          }
           if(pavadinimas !== null  && atsakingo_asmens_vardas !== null && atsakingo_asmens_pavarde !== null && 
               atsakingo_asmens_kontaktas !== null && kompiuteriu_kiekis > 0 && energijos_riba_per_zmogu > 0){
             const repApi = new accommodationApi();
-            const response = await repApi.newPatalpa(pavadinimas, atsakingo_asmens_vardas, atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu);
+            const response = await repApi.newPatalpa(pavadinimas, atsakingo_asmens_vardas, atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu, min_energija_ispejimui, checkingSubmit(checked));
             navigate(`/accommodation/${response.data.insertId}`);
           }
           else{
@@ -58,6 +69,13 @@ export default function AccommondationForm() {
           console.log(err);
         }
       };
+
+      function checkingSubmit(asmeniniai_prietaisai) {
+        if (asmeniniai_prietaisai === false) {
+            return 0;
+        }
+        else return 1
+    }
     
     return (
         <div>
@@ -80,6 +98,11 @@ export default function AccommondationForm() {
                         <TextField sx={{ py: 5 }} id="kompiuteriu_kiekis" name="kompiuteriu_kiekis" label="Kompiuterių kiekis" variant="outlined" type="number" onChange={(event) => {setKompiuteriu_kiekis(event.target.value);}}/><br />
 
                         <TextField sx={{ py: 5 }} id="energijos_riba_per_zmogu" name="energijos_riba_per_zmogu" label="Energijos riba per žmogų" variant="outlined" type="number" onChange={(event) => {setEnergijos_riba_per_zmogu(event.target.value);}}/><br />
+                    </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, gap: 3 }}>
+                            <TextField sx={{ my: 5 }} InputLabelProps={{ shrink: true }} id="min_energija_ispejimui" name="min_energija_ispejimui" label="Min. energija nuo kurios siųsti įpėjimą" variant="outlined" type="number"  onChange={(event) => {setMin_energija_ispejimui(event.target.value);}}/><br />
+
+                            <FormControlLabel control={<Checkbox sx={{ my: 5 }} id="asmeniniai_prietaisai" name="asmeniniai_prietaisai" checked={checked} onChange={handleChange}/>} label="Ar bus asmeninių kompiuterių?"  /><br />
                     </Box>
 
                     <Button style={{ background: "#1DA1F2", color: "white" }} onClick={handleClick}>Pateikti</Button>

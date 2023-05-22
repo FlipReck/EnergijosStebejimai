@@ -25,8 +25,8 @@ export default class accommodationApi extends Api {
   getAllTime = () => {
     return super.init().get(`times`);
   };
-  newPatalpa = (pavadinimas, atsakingo_asmens_vardas, atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu) => {
-    return super.init().post(`newPatalpa?pavadinimas=${pavadinimas}&atsakingo_asmens_vardas=${atsakingo_asmens_vardas}&atsakingo_asmens_pavarde=${atsakingo_asmens_pavarde}&atsakingo_asmens_kontaktas=${atsakingo_asmens_kontaktas}&kompiuteriu_kiekis=${kompiuteriu_kiekis}&energijos_riba_per_zmogu=${energijos_riba_per_zmogu}`);
+  newPatalpa = (pavadinimas, atsakingo_asmens_vardas, atsakingo_asmens_pavarde, atsakingo_asmens_kontaktas, kompiuteriu_kiekis, energijos_riba_per_zmogu, min_energija_ispejimui, asmeniniai_prietaisai) => {
+    return super.init().post(`newPatalpa?pavadinimas=${pavadinimas}&atsakingo_asmens_vardas=${atsakingo_asmens_vardas}&atsakingo_asmens_pavarde=${atsakingo_asmens_pavarde}&atsakingo_asmens_kontaktas=${atsakingo_asmens_kontaktas}&kompiuteriu_kiekis=${kompiuteriu_kiekis}&energijos_riba_per_zmogu=${energijos_riba_per_zmogu}&min_energija_ispejimui=${min_energija_ispejimui}&asmeniniai_prietaisai=${asmeniniai_prietaisai}`);
   };
   getAccommodationTimes = (id) => {
     return super.init().get(`getAccommodationTimes?id=${id}`);

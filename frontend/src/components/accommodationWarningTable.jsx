@@ -25,7 +25,6 @@ export default function WarningTable({ data }) {
         axios.post(`http://127.0.0.1:5000/warningSeen`, warningData).then(response => {
             // console.log(response);
             if (response.status == 201) {
-                window.alert("Įspėjimas pažymėtas, kaip matytas");
                 window.location.reload();
             }
         }).catch(error => alert(error.response.statusText));
@@ -39,11 +38,24 @@ export default function WarningTable({ data }) {
         else return "Taip"
     }
 
+    function convert(laikas) {
+        const originalDate = new Date(laikas);
+        const formattedDate = originalDate.toLocaleString('fr-FR', {
+            timeZone: 'Europe/Istanbul',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+        return formattedDate
+    }
+
     return (
         <Box sx={{ flexGrow: 1, p: 3 }}>
             <Typography sx={{ textAlign: "center" }}>Įspėjimai</Typography>
             {data === null || data.length === 0 ? (
-                <Typography sx={{ textAlign: "center" }}>Nėra įspėjimų</Typography>
+                <Typography sx={{ textAlign: "center" }}>Nėra nematytų įspėjimų</Typography>
             ) : (
                 <Table>
                     <TableHead>
@@ -65,7 +77,7 @@ export default function WarningTable({ data }) {
                         {data.map((row) => (
                             <TableRow key={row.id}>
                                 <TableCell component="th" scope="row">
-                                    {row.data}
+                                    {convert(row.data)}
                                 </TableCell>
                                 <TableCell>
                                     {row.galios_virsyjimas}

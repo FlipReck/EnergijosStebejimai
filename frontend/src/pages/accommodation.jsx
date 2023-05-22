@@ -82,7 +82,7 @@ export default function Accommondation() {
             // document.getElementById(tag).style.backroundColor = "#1DA1F2";
             return (
                 <>
-                    Busy 
+                    Užimta 
                     <Link sx={{ ml: 2, pl: 5 }} to={`/times/${uz_laikas}`}>
                         »
                     </Link>   
@@ -90,6 +90,14 @@ export default function Accommondation() {
             );
         }
     }
+
+    function checkingPersonalDevices(check) {
+        if (check === 0) {
+            return "Ne";
+        }
+        else return "Taip"
+    }
+    
 
     function emptyDays() {
         let days = [];
@@ -144,6 +152,8 @@ export default function Accommondation() {
                             <ListItem>Atsakingo asmens kontaktas</ListItem>
                             <ListItem>Kompiuterių kiekis</ListItem>
                             <ListItem>Energijos riba per žmogų</ListItem>
+                            <ListItem>Min. energija nuo kurios siųsti įpėjimą</ListItem>
+                            <ListItem>Ar bus asmeninių kompiuterių?</ListItem>
                             <ListItem><Button sx={{ mr: 1 }} style={{ background: "#1DA1F2", color: "white" }} onClick={() => navigate(`update`)}>
                                 Redaguoti
                             </Button>
@@ -166,13 +176,15 @@ export default function Accommondation() {
                             <ListItem>{data[0].atsakingo_asmens_kontaktas}</ListItem>
                             <ListItem>{data[0].kompiuteriu_kiekis}</ListItem>
                             <ListItem>{data[0].energijos_riba_per_zmogu}</ListItem>
+                            <ListItem>{data[0].min_energija_ispejimui}</ListItem>
+                            <ListItem>{checkingPersonalDevices(data[0].asmeniniai_prietaisai)}</ListItem>
                         </List>
                     </Box>)}
                 <Typography sx={{ textAlign: "center" }}>Šiandienos momentinių enegijos sąnaudų diagrama</Typography>
                 <Graph ref={chartRef} data={entries} scale={"Valanda"} />
 
-                <DevicesTable data1={data1} navigate={navigate} setData1={setData1} />
-
+                {/* <DevicesTable data1={data1} navigate={navigate} setData1={setData1} /> */}
+                
                 <WarningTable data={data2}/>
 
                 <Box sx={{ flexGrow: 1, p: 3 }}>
